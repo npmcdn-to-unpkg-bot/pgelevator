@@ -27,7 +27,7 @@ import {PgService} from "../services/pg.service";
         display: block;
     }
     .schema sup { font-size: 8px }
-    .table { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .table, .schema-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   `]
 })
 export class NavComponent {
