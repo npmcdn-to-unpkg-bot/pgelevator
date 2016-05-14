@@ -1,0 +1,1 @@
+{"version":3,"file":"resizible.directive.js","sourceRoot":"","sources":["../../app/shared/resizible.directive.ts"],"names":[],"mappings":";;;;;;;;;;AAAA,qBAA6C,eAAe,CAAC,CAAA;AAG7D;IACI,4BAAY,EAAc;QACvB,EAAE,CAAC,aAAa,CAAC,KAAK,CAAC,eAAe,GAAG,QAAQ,CAAC;IACrD,CAAC;IAJL;QAAC,gBAAS,CAAC,EAAE,QAAQ,EAAE,aAAa,EAAE,CAAC;;0BAAA;IAKvC,yBAAC;AAAD,CAAC,AAJD,IAIC;AAJY,0BAAkB,qBAI9B,CAAA"}

@@ -9,19 +9,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var nav_component_1 = require('./nav/nav.component');
-var AppComponent = (function () {
-    function AppComponent() {
+var HighlightDirective = (function () {
+    function HighlightDirective(el) {
+        el.nativeElement.style.backgroundColor = 'yellow';
     }
-    AppComponent = __decorate([
-        core_1.Component({
-            selector: 'pg-elevator',
-            directives: [nav_component_1.NavComponent],
-            template: "\n    <nav></nav><tabs></tabs><tab-content></tab-content>\n  "
-        }), 
-        __metadata('design:paramtypes', [])
-    ], AppComponent);
-    return AppComponent;
+    HighlightDirective = __decorate([
+        core_1.Directive({ selector: '[resizible]' }), 
+        __metadata('design:paramtypes', [core_1.ElementRef])
+    ], HighlightDirective);
+    return HighlightDirective;
 }());
-exports.AppComponent = AppComponent;
-//# sourceMappingURL=app.component.js.map
+exports.HighlightDirective = HighlightDirective;
+//# sourceMappingURL=resizible.directive.js.map

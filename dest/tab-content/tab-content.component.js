@@ -9,19 +9,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var nav_component_1 = require('./nav/nav.component');
-var AppComponent = (function () {
-    function AppComponent() {
+var TabContentComponent = (function () {
+    function TabContentComponent() {
     }
-    AppComponent = __decorate([
+    TabContentComponent = __decorate([
         core_1.Component({
-            selector: 'pg-elevator',
-            directives: [nav_component_1.NavComponent],
-            template: "\n    <nav></nav><tabs></tabs><tab-content></tab-content>\n  "
+            selector: 'tab-content',
+            template: 'tab content...',
+            styles: ["\n    :host-context { position: absolute; left: 200px; top: 30px; bottom: 0; right: 0; }\n  "]
         }), 
         __metadata('design:paramtypes', [])
-    ], AppComponent);
-    return AppComponent;
+    ], TabContentComponent);
+    return TabContentComponent;
 }());
-exports.AppComponent = AppComponent;
-//# sourceMappingURL=app.component.js.map
+exports.TabContentComponent = TabContentComponent;
+//# sourceMappingURL=tab-content.component.js.map
