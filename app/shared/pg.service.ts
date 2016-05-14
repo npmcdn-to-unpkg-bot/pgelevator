@@ -151,11 +151,12 @@ export class PgService{
             AND typtype != 'c'
             ORDER BY typname
         `
-        this.query(sql).subscribe((data:PgType[]) => {
-            if (data['row'])
-            data.forEach((value) => {
-                this.types[value.id] = value;
-            });
+        this.query(sql).subscribe((data) => {
+            if (data['row']){
+                data['row'].forEach((value) => {
+                    this.types[value.id] = value;
+                });
+            }
         });
     }
     
