@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {QueryTabComponent} from '../tab/query-tab/query-tab.component'
-import {TabService} from '../tab/tab.service'
+import {TabService} from '../services/tab.service'
 
 @Component({
   selector: 'tab-content',

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import {TabService,Tab} from '../tab/tab.service'
+import {TabService,Tab} from '../services/tab.service'
 import {QueryTab} from '../tab/query-tab/query-tab'
 
 @Component({

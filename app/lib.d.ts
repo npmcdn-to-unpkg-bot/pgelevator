@@ -9,4 +9,5 @@ declare function CodeMirror(element:HTMLElement,options?:{
 
 interface Observable<T>{
     map<X>( mapFunction:(_:T) => X ): Observable<X>
+    subscribe(_):any
 }
