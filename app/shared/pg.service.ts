@@ -25,11 +25,9 @@ interface PgType{
 @Injectable()
 export class PgService{
     
-    http:Http
     types:{[_:string]:PgType}
     
     constructor(private http:Http){
-        this.http = http;
         this.getTypes()
     }
     
