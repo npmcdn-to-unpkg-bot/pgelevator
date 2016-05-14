@@ -9,8 +9,10 @@ export class EditorComponent {
     
     @Input() code
     codeMirror: CodeMirror;
-    constructor(el:ElementRef){
-        this.codeMirror = CodeMirror( el.nativeElement, {
+    constructor(private el:ElementRef){ }
+
+    ngAfterViewInit(){
+        this.codeMirror = CodeMirror( this.el.nativeElement, {
             value: "SELECT * \nFROM funcionario\nWHERE chave = \"9798765T4\"",
             lineNumbers: true,
             mode:  "text/x-sql"
