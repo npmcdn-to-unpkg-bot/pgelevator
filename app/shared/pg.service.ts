@@ -35,8 +35,7 @@ export class PgService{
                 options
             )
             .map((res: Response) => {
-                let body = res.json();
-                return body || {};
+                return res.json() || {};
             })
     }
     
