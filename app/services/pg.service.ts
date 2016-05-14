@@ -72,23 +72,29 @@ export class PgService{
     }
     
     listTables(dbName:string){ // and views
-        let sql=`SELECT table_catalog db, table_schema schema_name,table_name,  
-            table_type, is_insertable_into, is_typed
-            ,            array_agg(CASE WHEN cp.data_column IS NOT NULL THEN cp.data_column END) primary_key,
-            array_agg(CASE WHEN cp.data_column IS NOT NULL THEN cp.data_type END) primary_key_type
-            FROM information_schema.tables t
-            LEFT JOIN (
-                SELECT a.attname data_column, format_type(a.atttypid, a.atttypmod) AS data_type, i.indrelid
-                FROM   pg_index i
-                JOIN   pg_attribute a ON a.attrelid = i.indrelid
-                                    AND a.attnum = ANY(i.indkey)
-            AND    i.indisprimary
-            ) cp ON cp.indrelid = CONCAT(table_schema,'.',table_name)::regclass
-            WHERE
-            table_catalog= $1
-            AND table_type in ('BASE TABLE', 'VIEW')
-            GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
-            ORDER BY table_schema, table_type, table_name;`;
+        let sql=`SELECT s.catalog_name db, s.schema_name, t.table_name, t.table_type, t.is_insertable_into, t.is_typed, 
+                t.primary_key,
+                t.primary_key_type
+                FROM information_schema.schemata s
+                LEFT JOIN (
+                    SELECT table_catalog db, table_schema schema_name,table_name, 
+                            table_type, is_insertable_into, is_typed
+                            ,            array_agg(CASE WHEN cp.data_column IS NOT NULL THEN cp.data_column END) primary_key,
+                            array_agg(CASE WHEN cp.data_column IS NOT NULL THEN cp.data_type END) primary_key_type
+                            FROM information_schema.tables t
+                            LEFT JOIN (
+                                SELECT a.attname data_column, format_type(a.atttypid, a.atttypmod) AS data_type, i.indrelid
+                                FROM   pg_index i
+                                JOIN   pg_attribute a ON a.attrelid = i.indrelid
+                                                    AND a.attnum = ANY(i.indkey)
+                            AND    i.indisprimary
+                            ) cp ON cp.indrelid = CONCAT(table_schema,'.',table_name)::regclass 
+                            WHERE table_catalog= $1 AND (table_type in ('BASE TABLE', 'VIEW') OR table_type is null)
+                            GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
+                            ORDER BY table_schema, table_type, table_name
+                ) AS t ON t.db=s.catalog_name AND t.schema_name=s.schema_name
+
+                WHERE catalog_name = $1 `;
         return this.query(sql, dbName)
     }
     listTablesFromSchema(dbName:string, schemaName:string){ // and views
