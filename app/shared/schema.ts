@@ -1,8 +1,7 @@
 export class Schema {
     id: number;    
     name: string;
-    owner: number;
-    databaseId:number;
+    owner: string;
+    database:string;
     comment:string;
-    charset:string;
 }
