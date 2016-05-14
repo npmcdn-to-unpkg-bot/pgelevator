@@ -162,18 +162,29 @@ export class PgService{
             }
         });
     }
-    
+    listUsers(){
+        let sql=`SELECT u.usename AS user_name,
+            u.usesysid AS user_id, 
+            CASE WHEN u.usesuper AND u.usecreatedb THEN CAST('superuser, create database' AS pg_catalog.text)
+                WHEN u.usesuper THEN CAST('superuser' AS pg_catalog.text)
+                WHEN u.usecreatedb THEN CAST('create database' AS pg_catalog.text)
+                ELSE CAST('' AS pg_catalog.text)
+            END AS user_attr
+            FROM pg_catalog.pg_user u`;
+            return this.query(sql);
+    }
     manageSchema(schema:Schema){
         if (schema.id){ //alter
             
         }else{ //create
-            let sql="CREATE SCHEMA $1 AUTHORIZATION $2 ;"
-            this.query(sql, schema.name, schema.owner);
-            console.log("query executada: "+sql);
-            if(schema.comment) {
-                sql="COMMENT ON SCHEMA $1 IS $2;";
-                this.query(sql, schema.name, schema.comment);
-            }
+            let me=this;
+            let sql="CREATE SCHEMA "+schema.name+" AUTHORIZATION "+schema.owner+" ;"
+            me.query(sql).subscribe(function(r){
+                if(schema.comment.length>0) {
+                     sql="COMMENT ON SCHEMA "+schema.name+" IS '"+schema.comment+"' ;";
+                     me.query(sql); 
+                }    
+            });
         }
     }
 }
