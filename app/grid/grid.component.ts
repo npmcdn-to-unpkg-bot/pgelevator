@@ -20,7 +20,6 @@ export class GridComponent{
     result
     constructor(el:ElementRef){
         this.el = el.nativeElement as HTMLElement;
-        
         var d = []
         for ( var c=0; c< 100000; c++ ) {
             d.push(['asjdhf',654654,"asdklfjhaklsdfhkljashdf",'564',null,false,'asdfasdf',true,new Date]);
@@ -30,10 +29,17 @@ export class GridComponent{
             cols: [{name:'A'},{name:'B'},{name:'C'},{name:'A'},{name:'A...'},{name:'A...'},{name:'A...'},
                 {name:'...asdf'},{name:'Asdf kjahsdf ha.'}]
         };
-        
         this.el.innerHTML = this.html();
         this.el.appendChild( this.cloneHeader() );
-        this.fixSize();  
+        window.addEventListener('resize',this.resize)
+    }
+    
+    resize = ()=>{
+        this.fixSize()
+    }
+    
+    ngOnDestroy(){
+        window.removeEventListener('resize',this.resize)
     }
     
     ngOnInit(){
