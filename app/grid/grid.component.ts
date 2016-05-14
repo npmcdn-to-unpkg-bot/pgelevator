@@ -42,7 +42,7 @@ export class GridComponent{
     
     constructor(el:ElementRef){
         this.el = el.nativeElement as HTMLElement;
-        this.el.innerHTML = '<div><div></div></div><table class=grid-header></table>'
+        this.el.innerHTML = '<div><div style=overflow:hidden></div></div><table class=grid-header></table>'
         this.headerTable = this.el.querySelector('.grid-header') as HTMLElement
         this.div = this.el.querySelector('div') as HTMLElement
         this.innerDiv = this.el.querySelector('div>div') as HTMLElement;
@@ -53,7 +53,7 @@ export class GridComponent{
         this.cloneHeader();
         window.addEventListener('resize',this.resize);
         this.div.addEventListener('scroll',this.scroll)
-        this.innerDiv.style.height = Math.round(this.ROW_HEIGHT*(this.result.rows.length+1)).toLocaleString().replace(/\./g,'') + 'px'
+        this.innerDiv.style.height = Math.round(this.ROW_HEIGHT*(this.result.rows.length-1)+1).toLocaleString().replace(/\./g,'') + 'px'
     }
     
     putInPosition(){
@@ -72,17 +72,14 @@ export class GridComponent{
         var end = start + sliceSize;
         if ( end >= this.result.rows.length)
             end = this.result.rows.length-1;
-        start = end - sliceSize;
-        if ( start < 0 )
-            start = 0;
-        this.start = start;
-        this.end = end;
+        this.start = Math.round(start);
+        this.end = Math.round(end);
     }
     
     createFakeResult(){
         var d = []
-        for ( var c=0; c< 100000; c++ ) {
-            d.push(['asjdhf',654654,"asdklfjhaklsdfhkljashdf",'564',null,false,'asdfasdf',true,new Date]);
+        for ( var c=0; c< 10000; c++ ) {
+            d.push(['asjdhf',c,"asdklfjhaklsdfhkljashdf",'564',null,false,'asdfasdf',true,new Date]);
         }
         return {
             rows: d,
@@ -128,7 +125,7 @@ export class GridComponent{
             h.push('</th>')
         })
         h.push('</tr></thead><tbody>');
-        for ( var c=0; c < 500 && c < this.result.rows.length; c++ ) {
+        for ( var c=this.start; c < this.end && c < this.result.rows.length; c++ ) {
             var row = this.result.rows[c];
             h.push('<tr>')
             row.forEach((cell)=>{
