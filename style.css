@@ -4,3 +4,5 @@ body { font-family: sans-serif; cursor: default }
 nav { background: #ddd }
 tabs { background: #ddd }
 .schema:hover { background: #bbb }
+
+.tab.active { background: #555; color: white }
