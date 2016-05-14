@@ -12,14 +12,15 @@ var core_1 = require('@angular/core');
 var nav_component_1 = require('./nav/nav.component');
 var tab_content_component_1 = require('./tab-content/tab-content.component');
 var tabs_component_1 = require('./tabs/tabs.component');
+var editor_component_1 = require('./editor/editor.component');
 var PgElevatorComponent = (function () {
     function PgElevatorComponent() {
     }
     PgElevatorComponent = __decorate([
         core_1.Component({
             selector: 'pg-elevator',
-            directives: [nav_component_1.NavComponent, tab_content_component_1.TabContentComponent, tabs_component_1.TabsComponent],
-            template: "\n    <nav></nav><tabs></tabs><tab-content></tab-content>\n  "
+            directives: [nav_component_1.NavComponent, tab_content_component_1.TabContentComponent, tabs_component_1.TabsComponent, editor_component_1.EditorComponent],
+            template: "\n   <nav></nav><tabs></tabs><tab-content></tab-content>\n  "
         }), 
         __metadata('design:paramtypes', [])
     ], PgElevatorComponent);
