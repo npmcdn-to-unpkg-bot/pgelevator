@@ -11,9 +11,9 @@ import {EditorComponent} from './editor/editor.component';
    <nav [style.width.px]=left style="position: absolute; left: 0; top: 0; bottom: 0; "></nav>
    <tabs [style.left.px]=left style="position: absolute; top: 0; right: 0; height: 30px;"></tabs>
    <tab-content [style.left.px]=left style="position: absolute; top: 30px; bottom: 0; right: 0;"></tab-content>
-   <div [style.left.px]="left-1" [style.cursor]="cursor" 
+   <div [style.left.px]="left-2" [style.cursor]="cursor" 
         (mouseenter)="enter()" (mouseleave)="leave()" (mousedown)="mousedown($event)"
-    style="position:absolute;width:2px;top:0;bottom:0;"></div>
+        style="position:absolute;width:4px;top:0;bottom:0;"></div>
   `
 })
 export class PgElevatorComponent { 
