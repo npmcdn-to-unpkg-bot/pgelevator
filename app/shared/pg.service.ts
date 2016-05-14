@@ -131,7 +131,7 @@ export class PgService{
     getTypes(){
         let sql = `
             SELECT oid id, typname short_name, 
-            pg_catalog.format_type(oid, NULL)  name,
+            pg_catalog.format_type(oid, NULL)  type_name,
             CASE 
             WHEN typcategory = 'A' THEN 'array'
             WHEN typcategory = 'B' THEN 'boolean'
@@ -154,11 +154,12 @@ export class PgService{
             AND typtype != 'c'
             ORDER BY typname
         `
-        this.query(sql).subscribe((data:PgType[]) => {
-            if (data['row'])
-            data.forEach((value) => {
-                this.types[value.id] = value;
-            });
+        this.query(sql).subscribe((data) => {
+            if (data['row']){
+                data['row'].forEach((value) => {
+                    this.types[value.id] = value;
+                });
+            }
         });
     }
     
