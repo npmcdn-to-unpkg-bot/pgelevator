@@ -6,3 +6,7 @@ declare function CodeMirror(element:HTMLElement,options?:{
     lineNumbers?:boolean,
     mode?:string
 }):CodeMirror
+
+interface Observable<T>{
+    map<X>( mapFunction:(_:T) => X ): Observable<X>
+}
