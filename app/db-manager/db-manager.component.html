@@ -1,0 +1,18 @@
+<div>
+    <label>Id: {{db.id}}</label>
+    <label class="db-name">
+        Database name <input [(ngModel)]="db.name" placeholder="name"/>
+    </label>
+    <label class="db-owner">
+        Owner <select [(ngModel)]="db.owner"><option value="postgre">postgre</option></select>
+    </label>
+    <label class="db-charset">
+        Charset <select [(ngModel)]="db.charset">
+                    <option value="UTF-8">UTF-8</option>
+                    <option value="LATIN1">LATIN1</option>
+                </select>
+    </label>
+    <label>Comment</label>
+    <textarea [(ngModel)]="db.comment" placeholder="comment"></textarea>
+    
+</div>
