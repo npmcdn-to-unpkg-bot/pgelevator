@@ -72,7 +72,7 @@ export class PgService{
             table_catalog= $1
             AND table_type in ('BASE TABLE', 'VIEW')
             GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
-            ORDER BY table_schema,table_name;`;
+            ORDER BY table_schema, table_type, table_name;`;
         return this.query(sql, dbName)
     }
     listTablesFromSchema(dbName:string, schemaName:string){ // and views

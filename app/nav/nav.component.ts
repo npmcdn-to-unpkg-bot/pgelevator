@@ -7,7 +7,7 @@ import {PgService} from "../shared/pg.service";
     <div class="schema" *ngFor="let schema of schemas" (click)="open(schema)" [class.open]="schema.open">
       <span>{{schema.name}}</span>
       <div class="table" *ngFor="let table of schema.tables">
-        {{table}}
+        {{table.name}} <sup>{{table.type}}</sup>
       </div>
     </div>
   `,
@@ -25,6 +25,7 @@ import {PgService} from "../shared/pg.service";
     .schema.open .table {
         display: block;
     }
+    .schema sup { font-size: 8px }
   `]
 })
 export class NavComponent {
@@ -53,14 +54,14 @@ export class NavComponent {
                 if (typeof tmp[sname] == 'undefined'){
                     tmp[sname] = {tables: []}
                 } else {
-                    tmp[sname].tables.push(val[2]);
+                    tmp[sname].tables.push({name: val[2], type: val[3]});
                 }
             });
 
             for(var schema in tmp){
                 console.log(schema, tmp)
                 let obj = {name: schema, tables: [], open: false}
-                if (typeof tmp[schema].tables == 'undefined') continue;
+                if (tmp[schema].tables.length === 0) continue;
                 tmp[schema].tables.forEach((val) => {
                     obj.tables.push(val);
                 });
