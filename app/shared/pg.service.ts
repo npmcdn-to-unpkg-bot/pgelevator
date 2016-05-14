@@ -128,7 +128,7 @@ export class PgService{
     getTypes(){
         let sql = `
             SELECT oid id, typname short_name, 
-            pg_catalog.format_type(oid, NULL)  name,
+            pg_catalog.format_type(oid, NULL)  type_name,
             CASE 
             WHEN typcategory = 'A' THEN 'array'
             WHEN typcategory = 'B' THEN 'boolean'
