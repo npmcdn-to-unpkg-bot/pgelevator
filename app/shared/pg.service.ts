@@ -57,8 +57,8 @@ export class PgService{
     
     listTables(dbName:string){ // and views
         let sql=`SELECT table_catalog db, table_schema schema_name,table_name,  
-            table_type, is_insertable_into, is_typed,
-            array_agg(CASE WHEN cp.data_column IS NOT NULL THEN cp.data_column END) primary_key,
+            table_type, is_insertable_into, is_typed
+            ,            array_agg(CASE WHEN cp.data_column IS NOT NULL THEN cp.data_column END) primary_key,
             array_agg(CASE WHEN cp.data_column IS NOT NULL THEN cp.data_type END) primary_key_type
             FROM information_schema.tables t
             LEFT JOIN (
@@ -73,7 +73,7 @@ export class PgService{
             AND table_type in ('BASE TABLE', 'VIEW')
             GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
             ORDER BY table_schema,table_name;`;
-        return this.query(sql, dbName, schemaName)
+        return this.query(sql, dbName)
     }
     listTablesFromSchema(dbName:string, schemaName:string){ // and views
         let sql=`SELECT table_catalog db, table_schema schema_name,table_name,  
