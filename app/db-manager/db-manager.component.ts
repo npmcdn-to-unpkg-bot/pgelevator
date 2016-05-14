@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Database } from '../shared/database';
+import { PgService } from '../shared/pg.service';
 
 @Component({
   selector: 'db-manager',
@@ -9,6 +10,9 @@ import { Database } from '../shared/database';
 export class DbManagerComponent implements OnInit {
     db:Database;
     @Input() id:number;
+    constructor(
+        private pgService:PgService
+    ){}
     ngOnInit() {
         /**TODO
          * get pg-roles to select owner
@@ -29,12 +33,18 @@ export class DbManagerComponent implements OnInit {
              */
         }
     }
+    
+    
+    save(){
+         this.pgService.listDatabases().subscribe(function(dbs){
+             
+             console.log(dbs);
+             //this.pgService.manageDb(this.db);
+         });
+        
+    }
  
     
-/*    CREATE DATABASE teste
-        WITH ENCODING='UTF8'
-       OWNER=postgres
-       CONNECTION LIMIT=-1;*/
 
     
 }

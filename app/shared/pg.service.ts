@@ -3,6 +3,9 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx'
 
+/**Manager imports */
+import { Schema } from './schema';
+
 class PgField{
     
 }
@@ -159,4 +162,17 @@ export class PgService{
         });
     }
     
+    manageSchema(schema:Schema){
+        if (schema.id){ //alter
+            
+        }else{ //create
+            let sql="CREATE SCHEMA $1 AUTHORIZATION $2 ;"
+            this.query(sql, schema.name, schema.owner);
+            console.log("query executada: "+sql);
+            if(schema.comment) {
+                sql="COMMENT ON SCHEMA $1 IS $2;";
+                this.query(sql, schema.name, schema.comment);
+            }
+        }
+    }
 }
