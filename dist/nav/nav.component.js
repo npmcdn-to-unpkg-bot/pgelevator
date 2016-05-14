@@ -15,8 +15,7 @@ var NavComponent = (function () {
     NavComponent = __decorate([
         core_1.Component({
             selector: 'nav',
-            template: 'nav...',
-            styles: ["\n    :host-context { position: absolute; left: 0; top: 0; bottom: 0; width: 200px; }\n  "]
+            template: 'nav...'
         }), 
         __metadata('design:paramtypes', [])
     ], NavComponent);

@@ -44,6 +44,11 @@ export class PgElevatorComponent {
       window.removeEventListener("mousemove",this.mousemove);
       window.removeEventListener("mouseleave",this.mouseleave);
     };
+    
+    pg
+        .query("select * from pg_stat_activity")
+        .subscribe((data) => { console.log(data)})
+
   }
   
   enter(){

@@ -15,8 +15,7 @@ var TabContentComponent = (function () {
     TabContentComponent = __decorate([
         core_1.Component({
             selector: 'tab-content',
-            template: 'tab content...',
-            styles: ["\n    :host-context { position: absolute; left: 200px; top: 30px; bottom: 0; right: 0; }\n  "]
+            template: 'tab content...'
         }), 
         __metadata('design:paramtypes', [])
     ], TabContentComponent);

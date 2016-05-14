@@ -15,8 +15,7 @@ var TabsComponent = (function () {
     TabsComponent = __decorate([
         core_1.Component({
             selector: 'tabs',
-            template: 'tabs...',
-            styles: ["\n    :host-context { position: absolute; left: 200px; top: 0; right: 0; height: 30px; }\n  "]
+            template: 'tabs...'
         }), 
         __metadata('design:paramtypes', [])
     ], TabsComponent);

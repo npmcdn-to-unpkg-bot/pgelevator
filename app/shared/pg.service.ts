@@ -17,21 +17,28 @@ class PgQuery extends Observable<PgResult>{
         
     }
 }
+interface PgType{
+    id:number
+    name:string
+}
+
 @Injectable()
 export class PgService{
     
     http:Http
+    types:{[_:string]:PgType}
     
     constructor(private http:Http){
         this.http = http;
+        this.getTypes()
     }
     
-    query(query:string){
+    query(query:string, ...values:any[]){
         let options = new RequestOptions({ headers: new Headers({'Content-Type': 'application/json'}) });
 
         return this.http
             .post('http://localhost:4000/sql',
-                JSON.stringify({sql: query}),
+                JSON.stringify({sql: query, values: values}),
                 options
             )
             .map((res: Response) => {
@@ -44,7 +51,7 @@ export class PgService{
     }
     
     listSchemas(dbName:string){
-        let sql="SELECT catalog_name db_name, schema_nameFROM information_schema.schemata WHERE catalog_name = ?1 AND schema_name NOT LIKE 'pg_%';";
+        let sql="SELECT catalog_name db_name, schema_nameFROM information_schema.schemata WHERE catalog_name = $1 AND schema_name NOT LIKE 'pg_%';";
     }
     
     listTables(dbName:string, schemaName:string){ // and views
@@ -84,6 +91,48 @@ export class PgService{
             AND NOT EXISTS(SELECT 1 FROM pg_catalog.pg_type el WHERE el.oid = t.typelem AND el.typarray = t.oid)
             AND pg_catalog.pg_type_is_visible(t.oid)
             ORDER BY 1, 2;`;
+    }
+
+    listTableMetadata(schemaName:string, tableName:string){
+        let sql =`
+            SELECT DISTINCT
+                a.attnum as num,
+                a.attname as name,
+                format_type(a.atttypid, a.atttypmod) as typ,
+                a.attnotnull as notnull, 
+                com.description as comment,
+                coalesce(i.indisprimary,false) as primary_key,
+                def.adsrc as default
+            FROM pg_attribute a 
+            JOIN pg_class pgc ON pgc.oid = a.attrelid
+            LEFT JOIN pg_index i ON 
+                (pgc.oid = i.indrelid AND i.indkey[0] = a.attnum)
+            LEFT JOIN pg_description com on 
+                (pgc.oid = com.objoid AND a.attnum = com.objsubid)
+            LEFT JOIN pg_attrdef def ON 
+                (a.attrelid = def.adrelid AND a.attnum = def.adnum)
+            LEFT JOIN pg_namespace nsp ON nsp.oid=pgc.relnamespace
+            WHERE a.attnum > 0 AND pgc.oid = a.attrelid
+            AND pg_table_is_visible(pgc.oid)
+            AND NOT a.attisdropped
+            AND nsp.nspname = $1 AND pgc.relname = $2 
+            ORDER BY a.attnum;
+        `;
+
+    }
+
+    getTypes(){
+        let sql = `
+            SELECT oid as id, * FROM pg_type 
+            WHERE typelem = 0
+            AND typtype != 'c'
+            ORDER BY typname
+        `
+        this.query(sql).subscribe((data:PgType[]) => {
+            data.forEach((value) => {
+                this.types[value.id] = value;
+            });
+        });
     }
     
 }

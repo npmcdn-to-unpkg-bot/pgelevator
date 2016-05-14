@@ -2,4 +2,7 @@
 var platform_browser_dynamic_1 = require('@angular/platform-browser-dynamic');
 var pg_elevator_component_1 = require('./pg-elevator.component');
 platform_browser_dynamic_1.bootstrap(pg_elevator_component_1.PgElevatorComponent);
+window.addEventListener('mousedown', function (e) {
+    e.preventDefault();
+});
 //# sourceMappingURL=main.js.map
