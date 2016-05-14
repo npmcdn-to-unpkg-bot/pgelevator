@@ -4,7 +4,7 @@ import {TabContentComponent} from './tab-content/tab-content.component';
 import {TabsComponent} from './tabs/tabs.component';
 import {EditorComponent} from './editor/editor.component';
 import { HTTP_PROVIDERS }    from '@angular/http';
-import {PgService} from "./shared/pg.service";
+import {PgService} from "./services/pg.service";
 import Timer = NodeJS.Timer;
 
 @Component({

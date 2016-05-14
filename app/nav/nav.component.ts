@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {PgService} from "../shared/pg.service";
+import {PgService} from "../services/pg.service";
 
 @Component({
   selector: 'nav',

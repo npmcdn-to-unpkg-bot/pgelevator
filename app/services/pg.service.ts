@@ -4,7 +4,20 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx'
 
 /**Manager imports */
-import { Schema } from './schema';
+interface Schema {
+    id: number;
+    name: string;
+    owner: string;
+    database:string;
+    comment:string;
+}
+// interface Database {
+//     id: number;
+//     name: string;
+//     owner:string;
+//     comment:string;
+//     charset:string;
+// }
 
 class PgField{
     

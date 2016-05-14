@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Schema } from '../shared/schema';
-import { PgService } from '../shared/pg.service';
+import { PgService } from '../services/pg.service';
 
 @Component({
   selector: 'schema-manager',
@@ -8,7 +7,7 @@ import { PgService } from '../shared/pg.service';
   styleUrls: ['app/schema-manager/schema-manager.component.css']
 })
 export class SchemaManagerComponent implements OnInit {
-    schema:Schema;
+    schema;
     @Input() id:number;
     users:string[]=[];
     constructor(

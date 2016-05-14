@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Database } from '../shared/database';
-import { PgService } from '../shared/pg.service';
+import { PgService } from '../services/pg.service';
 
 @Component({
   selector: 'db-manager',
@@ -8,7 +7,7 @@ import { PgService } from '../shared/pg.service';
   styleUrls: ['app/db-manager/db-manager.component.css']
 })
 export class DbManagerComponent implements OnInit {
-    db:Database;
+    db;
     @Input() id:number;
     constructor(
         private pgService:PgService
