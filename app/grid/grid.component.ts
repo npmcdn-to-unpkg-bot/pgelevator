@@ -9,7 +9,7 @@ import { Component, ElementRef } from '@angular/core';
         :host-context table.content-table { width:100%; }
         :host-context table.content-table thead { visibility: hidden; }
         :host-context th, :host-context td {
-            white-space: nowrap; /* height: 21px; */
+            white-space: nowrap; height: 21px; 
             border-width: 1px; border-style: solid }
         :host-context>div {
             position:absolute;left:0; bottom:0;right:0;overflow: auto
@@ -17,54 +17,99 @@ import { Component, ElementRef } from '@angular/core';
     `]
 })
 export class GridComponent{
+    
+    ROW_HEIGHT = 21
     el:HTMLElement
     result
+    headerTable:HTMLElement
+    div:HTMLElement
+    innerDiv:HTMLElement
+    start:number
+    end:number
+    resize = ()=>{
+        this.fixSize()
+    }
+    timeout
+    scroll = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(()=>{
+            this.calculatePart();
+            this.innerDiv.innerHTML = this.html()
+            this.putInPosition()
+            this.fixSize()
+        },500)
+    }
+    
     constructor(el:ElementRef){
         this.el = el.nativeElement as HTMLElement;
+        this.el.innerHTML = '<div><div style=overflow:hidden></div></div><table class=grid-header></table>'
+        this.headerTable = this.el.querySelector('.grid-header') as HTMLElement
+        this.div = this.el.querySelector('div') as HTMLElement
+        this.innerDiv = this.el.querySelector('div>div') as HTMLElement;
+        this.result = this.createFakeResult();
+        this.calculatePart();
+        this.innerDiv.innerHTML = this.html();
+        this.putInPosition();
+        this.cloneHeader();
+        window.addEventListener('resize',this.resize);
+        this.div.addEventListener('scroll',this.scroll)
+        this.innerDiv.style.height = Math.round(this.ROW_HEIGHT*(this.result.rows.length-1)+1).toLocaleString().replace(/\./g,'') + 'px'
+    }
+    
+    putInPosition(){
+        var contentTable = this.el.querySelector('.content-table') as HTMLElement;
+        contentTable.style.marginTop = Math.round((this.start-1)*this.ROW_HEIGHT).toLocaleString().replace(/\./g,'')+'px';
+    }
+    
+    calculatePart(){
+        var sliceSize = 4 * (window.screen.height / this.ROW_HEIGHT)
+        var firstRow = this.div.scrollTop/this.ROW_HEIGHT
+        var rowsPerBody = document.body.offsetHeight/this.ROW_HEIGHT
+        var middle = firstRow + rowsPerBody/2
+        var start = Math.round(middle - sliceSize/2)
+        if ( start < 0 )
+            start = 0;
+        var end = start + sliceSize;
+        if ( end >= this.result.rows.length)
+            end = this.result.rows.length-1;
+        this.start = Math.round(start);
+        this.end = Math.round(end);
+    }
+    
+    createFakeResult(){
         var d = []
-        for ( var c=0; c< 100000; c++ ) {
-            d.push(['asjdhf',654654,"asdklfjhaklsdfhkljashdf",'564',null,false,'asdfasdf',true,new Date]);
+        for ( var c=0; c< 10000; c++ ) {
+            d.push(['asjdhf',c,"asdklfjhaklsdfhkljashdf",'564',null,false,'asdfasdf',true,new Date]);
         }
-        this.result = {
+        return {
             rows: d,
             cols: [{name:'A'},{name:'B'},{name:'C'},{name:'A'},{name:'A...'},{name:'A...'},{name:'A...'},
                 {name:'...asdf'},{name:'Asdf kjahsdf ha.'}]
         };
-        this.el.innerHTML = this.html();
-        this.el.appendChild( this.cloneHeader() );
-        window.addEventListener('resize',this.resize);
-    }
-    
-    resize = ()=>{
-        this.fixSize()
     }
     
     ngOnDestroy(){
         window.removeEventListener('resize',this.resize)
+        this.div.removeEventListener('scroll',this.scroll)
     }
     
     ngOnInit(){
         this.fixSize(); 
     }
     
-    cloneHeader():HTMLElement{
+    cloneHeader(){
         var thead = this.el.querySelector('thead').cloneNode(true);
-        var table = document.createElement('table');
-        table.className = 'grid-header';
-        table.appendChild(thead);
-        return table;
+        this.headerTable.innerHTML = ''
+        this.headerTable.appendChild(thead);
     }
     
     fixSize(){
         var header = this.el.querySelector('.grid-header') as HTMLElement;
-        var div = this.el.querySelector('div') as HTMLElement;
         var contentTable = this.el.querySelector('.content-table') as HTMLElement;
         var hiddenHeader = this.el.querySelector('.content-table thead') as HTMLElement;
         var headerThs = this.el.querySelectorAll('.grid-header th');
         var hiddenThs = this.el.querySelectorAll('.content-table th');
-        contentTable.style.marginTop = '-'+hiddenHeader.offsetHeight+'px';
-        div.style.top = hiddenHeader.offsetHeight+'px'
-        
+        this.div.style.top = hiddenHeader.offsetHeight+'px'
         for ( var c=0; c<hiddenThs.length; c++) {
             (headerThs[c] as HTMLElement).style.width =
                 (hiddenThs[c] as HTMLElement).offsetWidth+'px'; 
@@ -73,14 +118,14 @@ export class GridComponent{
     }
     
     html(){
-        var h = ['<div style=""><table class=content-table><thead><tr>'];
+        var h = ['<table class=content-table><thead><tr>'];
         this.result.cols.forEach((c)=>{
             h.push('<th>')
             h.push( c.name )
             h.push('</th>')
         })
         h.push('</tr></thead><tbody>');
-        for ( var c=0; c < 500 && c < this.result.rows.length; c++ ) {
+        for ( var c=this.start; c < this.end && c < this.result.rows.length; c++ ) {
             var row = this.result.rows[c];
             h.push('<tr>')
             row.forEach((cell)=>{
@@ -90,7 +135,7 @@ export class GridComponent{
             });
             h.push('</tr>')
         }
-        h.push('</tbody></table></div>')
+        h.push('</tbody></table>')
         return h.join('')
     }
 }
