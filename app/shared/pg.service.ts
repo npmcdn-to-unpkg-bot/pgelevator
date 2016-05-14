@@ -1,6 +1,7 @@
-import {Http} from '@angular/http';
+import {Http, Response, RequestOptions, Headers} from '@angular/http';
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
+import 'rxjs/Rx'
 
 class PgField{
     
@@ -21,14 +22,22 @@ export class PgService{
     
     http:Http
     
-    constructor(http:Http){
+    constructor(private http:Http){
         this.http = http;
     }
     
     query(query:string){
-        return this.http.post('...', JSON.stringify({query: ''}), {
-            
-        } )
+        let options = new RequestOptions({ headers: new Headers({'Content-Type': 'application/json'}) });
+
+        return this.http
+            .post('http://localhost:4000/sql',
+                JSON.stringify({sql: query}),
+                options
+            )
+            .map((res: Response) => {
+                let body = res.json();
+                return body || {};
+            })
     }
     
     listSchemas(){
