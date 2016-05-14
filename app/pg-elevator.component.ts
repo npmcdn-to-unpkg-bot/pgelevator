@@ -3,10 +3,14 @@ import {NavComponent} from './nav/nav.component';
 import {TabContentComponent} from './tab-content/tab-content.component';
 import {TabsComponent} from './tabs/tabs.component';
 import {EditorComponent} from './editor/editor.component';
+import { HTTP_PROVIDERS }    from '@angular/http';
+import {PgService} from "./shared/pg.service";
+import Timer = NodeJS.Timer;
 
 @Component({
   selector: 'pg-elevator',
   directives: [NavComponent,TabContentComponent,TabsComponent,EditorComponent],
+  providers: [HTTP_PROVIDERS, PgService],
   template: `
    <nav [style.width.px]=left style="position: absolute; left: 0; top: 0; bottom: 0; "></nav>
    <tabs [style.left.px]=left style="position: absolute; top: 0; right: 0; height: 30px;"></tabs>
@@ -19,13 +23,13 @@ import {EditorComponent} from './editor/editor.component';
 export class PgElevatorComponent { 
   left = 200
   cursor:string = null
-  timeout:number
+  timeout:Timer
   lastLeft:number
   clientX:number = null
   mousemove:(e:MouseEvent)=>void
   mouseleave:()=>void
   
-  constructor(){
+  constructor(private pg: PgService){
     this.mousemove = (e)=>{
       var l = this.lastLeft + e.clientX - this.clientX;
       if ( l < 50 )
