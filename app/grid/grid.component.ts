@@ -6,12 +6,13 @@ import { Component, ElementRef } from '@angular/core';
     styles: [`
         :host-context{position:absolute;left:0;top:0;bottom:0;right:0;  }
         :host-context table {  border-collapse:collapse; }
-        :host-context table.content-table { width:100%; margin-top:-21px;}
+        :host-context table.content-table { width:100%; }
+        :host-context table.content-table thead { visibility: hidden; }
         :host-context th, :host-context td {
-            white-space: nowrap; height: 21px;
+            white-space: nowrap; /* height: 21px; */
             border-width: 1px; border-style: solid }
         :host-context>div {
-            position:absolute;left:0;top:21px;bottom:0;right:0;overflow: auto
+            position:absolute;left:0; bottom:0;right:0;overflow: auto
         }
     `]
 })
@@ -31,7 +32,7 @@ export class GridComponent{
         };
         this.el.innerHTML = this.html();
         this.el.appendChild( this.cloneHeader() );
-        window.addEventListener('resize',this.resize)
+        window.addEventListener('resize',this.resize);
     }
     
     resize = ()=>{
@@ -55,14 +56,20 @@ export class GridComponent{
     }
     
     fixSize(){
+        var header = this.el.querySelector('.grid-header') as HTMLElement;
+        var div = this.el.querySelector('div') as HTMLElement;
+        var contentTable = this.el.querySelector('.content-table') as HTMLElement;
+        var hiddenHeader = this.el.querySelector('.content-table thead') as HTMLElement;
         var headerThs = this.el.querySelectorAll('.grid-header th');
         var hiddenThs = this.el.querySelectorAll('.content-table th');
+        contentTable.style.marginTop = '-'+hiddenHeader.offsetHeight+'px';
+        div.style.top = hiddenHeader.offsetHeight+'px'
+        
         for ( var c=0; c<hiddenThs.length; c++) {
             (headerThs[c] as HTMLElement).style.width =
                 (hiddenThs[c] as HTMLElement).offsetWidth+'px'; 
         }
-        (this.el.querySelector('.grid-header') as HTMLElement).style.width = 
-               (this.el.querySelector('.content-table') as HTMLElement).offsetWidth+'px'
+        header.style.width = contentTable.offsetWidth+'px'
     }
     
     html(){
@@ -83,9 +90,7 @@ export class GridComponent{
             });
             h.push('</tr>')
         }
-        
-        h.push('</tbody></table></div>');
-        
+        h.push('</tbody></table></div>')
         return h.join('')
     }
 }
