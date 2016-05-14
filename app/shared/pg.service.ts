@@ -127,12 +127,32 @@ export class PgService{
 
     getTypes(){
         let sql = `
-            SELECT oid as id, * FROM pg_type 
+            SELECT oid id, typname short_name, 
+            pg_catalog.format_type(oid, NULL)  name,
+            CASE 
+            WHEN typcategory = 'A' THEN 'array'
+            WHEN typcategory = 'B' THEN 'boolean'
+            WHEN typcategory = 'C' THEN 'composite'
+            WHEN typcategory = 'D' THEN 'datetime'
+            WHEN typcategory = 'E' THEN 'enum'
+            WHEN typcategory = 'G' THEN 'geo'
+            WHEN typcategory = 'I' THEN 'network'
+            WHEN typcategory = 'N' THEN 'numeric'
+            WHEN typcategory = 'P' THEN 'pseudo'
+            WHEN typcategory = 'R' THEN 'range'
+            WHEN typcategory = 'S' THEN 'string'
+            WHEN typcategory = 'T' THEN 'timespan'
+            WHEN typcategory = 'U' THEN 'userdefined'
+            WHEN typcategory = 'V' THEN 'bit'
+            WHEN typcategory = 'X' THEN 'unknown'
+            ELSE 'unknown' END category
+            FROM pg_type 
             WHERE typelem = 0
             AND typtype != 'c'
             ORDER BY typname
         `
         this.query(sql).subscribe((data:PgType[]) => {
+            if (data['row'])
             data.forEach((value) => {
                 this.types[value.id] = value;
             });
