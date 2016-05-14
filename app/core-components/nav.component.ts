@@ -4,16 +4,17 @@ import {PgService} from "../services/pg.service";
 @Component({
   selector: 'nav',
   template: `
-    <div class="schema" *ngFor="let schema of schemas" (click)="open(schema)" [class.open]="schema.open">
-      <span>{{schema.name}}</span>
+    <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open">
+      <div class="schema-name" (click)="open(schema)">{{schema.name}}</div>
       <div class="table" *ngFor="let table of schema.tables">
         {{table.name}} <sup>{{table.type}}</sup>
       </div>
     </div>
   `,
   styles: [`
-    .schema {
-        padding: 2px 0 2px 20px; position: relative;
+    .schema { position: relative;}
+    .schema-name, .table {
+        padding: 2px 0 2px 20px; 
     }
     .schema:after{
         content: ''; border-top: 6px solid transparent; border-bottom: 6px solid transparent;
@@ -26,6 +27,7 @@ import {PgService} from "../services/pg.service";
         display: block;
     }
     .schema sup { font-size: 8px }
+    .table { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   `]
 })
 export class NavComponent {

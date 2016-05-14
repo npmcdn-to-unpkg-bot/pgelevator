@@ -3,8 +3,22 @@ import { PgService } from '../services/pg.service';
 
 @Component({
   selector: 'schema-manager',
-  templateUrl: 'app/schema-manager/schema-manager.component.html',
-  styleUrls: ['app/schema-manager/schema-manager.component.css']
+  template: `<div>
+    <label>Id: {{schema.id}}</label>
+    <label class="sch-name">
+        Schema name <input type=text [(ngModel)]="schema.name" placeholder="name"/>
+    </label>
+    
+    <label class="sch-owner">
+        Owner <select [(ngModel)]="schema.owner">
+                <option *ngFor="let u of users" value="{{u}}">{{u}}</option>
+            </select>
+    </label>
+    <label>Comment</label>
+    <textarea [(ngModel)]="schema.comment" placeholder="comment"></textarea>
+    <input type=button (click)="save()" value="save"/>
+</div>`,
+  style: ['div{z-index:5;} label{display:block;}']
 })
 export class SchemaManagerComponent implements OnInit {
     schema;

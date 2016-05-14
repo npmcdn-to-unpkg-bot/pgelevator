@@ -1,7 +1,7 @@
 
 import { bootstrap }    from '@angular/platform-browser-dynamic';
 
-import { PgElevatorComponent } from './pg-elevator.component';
+import { PgElevatorComponent } from './core-components/pg-elevator.component';
 
 bootstrap(PgElevatorComponent);
 

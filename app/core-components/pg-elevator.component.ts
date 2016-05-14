@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import {NavComponent} from './nav/nav.component';
-import {TabContentComponent} from './tab-content/tab-content.component';
-import {TabsComponent} from './tabs/tabs.component';
-import {EditorComponent} from './editor/editor.component';
+import {NavComponent} from './nav.component';
+import {TabContentComponent} from './tab-content.component';
+import {TabsComponent} from './tabs.component';
+import {EditorComponent} from '../components/editor.component';
 import { HTTP_PROVIDERS }    from '@angular/http';
-import {PgService} from "./services/pg.service";
+import {PgService} from "../services/pg.service";
 import Timer = NodeJS.Timer;
 
 @Component({
