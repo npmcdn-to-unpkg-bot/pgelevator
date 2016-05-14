@@ -45,11 +45,14 @@ export class PgService{
     }
     
     listDatabases(){
-        let sql="SELECT DISTINCT  catalog_name db_name FROM information_schema.schemata;";
+        let sql="SELECT DISTINCT catalog_name db_name FROM information_schema.schemata;";
+        return this.query(sql);
     }
     
     listSchemas(dbName:string){
-        let sql="SELECT catalog_name db_name, schema_nameFROM information_schema.schemata WHERE catalog_name = $1 AND schema_name NOT LIKE 'pg_%';";
+        let sql="SELECT catalog_name db_name, schema_name FROM information_schema.schemata " +
+            "WHERE catalog_name = $1 AND schema_name NOT LIKE 'pg_%';";
+        return this.query(sql, dbName);
     }
     
     listTables(dbName:string, schemaName:string){ // and views
@@ -66,18 +69,21 @@ export class PgService{
             AND    i.indisprimary
             ) cp ON cp.indrelid = CONCAT(table_schema,'.',table_name)::regclass
             WHERE
-            table_catalog= ?1 AND table_schema = ?2
+            table_catalog= $1 AND table_schema = $2
             AND table_type in ('BASE TABLE', 'VIEW')
             GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
             ORDER BY table_schema,table_name;`;
+        return this.query(sql, dbName, schemaName)
     }
     listSequences(dbName:string, schemaName:string){
         let sql=`SELECT *, sequence_name, data_type, minimum_value, maximum_value, start_value FROM information_schema.sequences 
-            WHERE sequence_catalog= ?1 AND sequence_schema= ?2 ;`
+            WHERE sequence_catalog= $1 AND sequence_schema= $2 ;`
+        return this.query(sql, dbName, schemaName)
     }
     listFunctions(schemaName:string){
         let sql=`SELECT  p.proname FROM    pg_catalog.pg_namespace n
-            JOIN pg_catalog.pg_proc p ON p.pronamespace = n.oid WHERE n.nspname = ?1 `;
+            JOIN pg_catalog.pg_proc p ON p.pronamespace = n.oid WHERE n.nspname = $1 `;
+        return this.query(sql, schemaName)
     }
     listDataTypes(){
         let sql=`SELECT n.nspname as "Schema",
@@ -89,6 +95,7 @@ export class PgService{
             AND NOT EXISTS(SELECT 1 FROM pg_catalog.pg_type el WHERE el.oid = t.typelem AND el.typarray = t.oid)
             AND pg_catalog.pg_type_is_visible(t.oid)
             ORDER BY 1, 2;`;
+        return this.query(sql)
     }
 
     listTableMetadata(schemaName:string, tableName:string){
@@ -114,9 +121,8 @@ export class PgService{
             AND pg_table_is_visible(pgc.oid)
             AND NOT a.attisdropped
             AND nsp.nspname = $1 AND pgc.relname = $2 
-            ORDER BY a.attnum;
-        `;
-
+            ORDER BY a.attnum;`
+        return this.query(sql, schemaName, tableName);
     }
 
     getTypes(){
