@@ -4,8 +4,8 @@ import {PgService} from "../services/pg.service";
 @Component({
   selector: 'nav',
   template: `
-    <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open">
-      <div class="schema-name" (click)="open(schema)">{{schema.name}}</div>
+    <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open" [class.arrow]="schema.tables.length!==0">
+      <div class="schema-name" (click)="open(schema)" >{{schema.name}}</div>
       <div class="table" *ngFor="let table of schema.tables">
         {{table.name}} <sup>{{table.type}}</sup>
       </div>
@@ -16,7 +16,7 @@ import {PgService} from "../services/pg.service";
     .schema-name, .table {
         padding: 2px 0 2px 20px; 
     }
-    .schema:after{
+    .arrow:after{
         content: ''; border-top: 6px solid transparent; border-bottom: 6px solid transparent;
         border-left: 6px solid #444;
         height: 0; display: block; position: absolute;
@@ -59,15 +59,17 @@ export class NavComponent {
                     tmp[sname].tables.push({name: val[2], type: val[3]});
                 }
             });
-
             for(var schema in tmp){
-                console.log(schema, tmp)
                 let obj = {name: schema, tables: [], open: false}
-                if (tmp[schema].tables.length === 0) continue;
-                tmp[schema].tables.forEach((val) => {
-                    obj.tables.push(val);
-                });
-                this.schemas.push(obj);
+                if (tmp[schema].tables.length === 0) {
+                    this.schemas.push(obj);    
+                }else{
+                    tmp[schema].tables.forEach((val) => {
+                        obj.tables.push(val);
+                    });
+                    this.schemas.push(obj);    
+                }
+                
             }
           }
         })
