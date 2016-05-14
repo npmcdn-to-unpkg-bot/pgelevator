@@ -3,3 +3,4 @@ body { font-family: sans-serif; cursor: default }
 
 nav { background: #ddd }
 tabs { background: #ddd }
+.schema:hover { background: #bbb }
