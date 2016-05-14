@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 
 import {TabService,Tab} from '../services/tab.service'
-import {QueryTab} from '../tab/query-tab/query-tab'
 
 @Component({
   selector: 'tabs',
@@ -19,7 +18,6 @@ export class TabsComponent {
     this.tabs = TabService.tabs
   }
   novaConsulta(){
-    TabService.add(new QueryTab)
   }
   activate(tab:Tab) {
     TabService.activate(tab)
