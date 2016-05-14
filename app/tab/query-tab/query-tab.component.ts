@@ -3,9 +3,9 @@ import {EditorComponent} from '../../editor/editor.component'
 
 @Component({
     selector: 'query-tab',
-    template: '<editor></editor>',
+    template: '<editor [code]=data.code></editor>',
     directives: [EditorComponent]
 })
 export class QueryTabComponent{
-    
+    @Input() data
 }
