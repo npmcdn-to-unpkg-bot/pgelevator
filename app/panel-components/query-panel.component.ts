@@ -12,11 +12,8 @@ export class QueryPanelModel implements PanelModel{
     template: 'query... {{model | json}}',
     selector: 'query-panel'
 })
-export class QueryPanel{
+export class QueryPanelComponent{
 
     @Input() model
 
-    constructor(){
-        console.log(this.model)
-    }
 }

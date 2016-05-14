@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {PanelsService, PanelModel} from "../services/panels.service";
-import {QueryPanel, QueryPanelModel} from "../panel-components/query-panel.component";
+import {QueryPanelComponent, QueryPanelModel} from "../panel-components/query-panel.component";
 
 @Component({
   selector: 'tabs',
