@@ -12,7 +12,7 @@ import Timer = NodeJS.Timer;
   directives: [NavComponent,TabContentComponent,TabsComponent,EditorComponent],
   providers: [HTTP_PROVIDERS, PgService],
   template: `
-   <nav [style.width.px]=left style="position: absolute; left: 0; top: 0; bottom: 0; "></nav>
+   <nav [style.width.px]=left style="position: absolute; left: 0; top: 0; bottom: 0;overflow:auto "></nav>
    <tabs [style.left.px]=left style="position: absolute; top: 0; right: 0; height: 30px;"></tabs>
    <tab-content [style.left.px]=left style="position: absolute; top: 30px; bottom: 0; right: 0;"></tab-content>
    <div [style.left.px]="left-2" [style.cursor]="cursor" 

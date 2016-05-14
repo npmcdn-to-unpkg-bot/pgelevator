@@ -1,25 +1,23 @@
 import { Component } from '@angular/core';
-
-import {TabService,Tab} from '../services/tab.service'
+import {PanelsService, PanelModel} from "../services/panels.service";
+import {QueryPanel, QueryPanelModel} from "../panel-components/query-panel.component";
 
 @Component({
   selector: 'tabs',
   template: `
-    <span *ngFor="let tab of tabs" [class.active]=tab.active style=float:left class=tab
+    <span *ngFor="let tab of PanelsService.models" [class.active]=tab.active style=float:left class=tab
       (click)=activate(tab)>
-      {{tab.type}}
+      {{tab.title}}
     </span>
     <button (click)=novaConsulta()>Nova Consulta</button>
   `
 })
 export class TabsComponent {
-  tabs:Tab[] 
-  constructor(){
-    this.tabs = TabService.tabs
-  }
+  PanelsService = PanelsService;
   novaConsulta(){
+    this.PanelsService.add(new QueryPanelModel())
   }
-  activate(tab:Tab) {
-    TabService.activate(tab)
+  activate(tab:PanelModel) {
+    this.PanelsService.activate(tab)
   }
 }
