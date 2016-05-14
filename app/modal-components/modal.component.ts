@@ -22,7 +22,7 @@ import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core'
         }
     `]
 })
-export class Modal implements OnInit, OnDestroy{
+export class ModalComponent implements OnInit, OnDestroy{
     el:HTMLElement
     height
     width

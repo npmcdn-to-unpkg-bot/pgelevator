@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import {PgService} from "../services/pg.service";
+import {ModalsService} from '../services/modals.service';
 
 @Component({
   selector: 'nav',
   template: `
+   <input type=button value='new schema' (click)='newSchemaModal()'/>
     <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open" [class.arrow]="schema.tables.length!==0">
       <div class="schema-name" (click)="open(schema)" >{{schema.name}}</div>
       <div class="table" *ngFor="let table of schema.tables">
@@ -73,5 +75,8 @@ export class NavComponent {
             }
           }
         })
+  }
+  newSchemaModal(){
+      ModalsService.schemaManager = {create:true,modelo:'alskdjflskjadf'}
   }
 }

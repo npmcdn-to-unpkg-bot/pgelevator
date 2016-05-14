@@ -18,11 +18,11 @@ import { PgService } from '../services/pg.service';
     <textarea [(ngModel)]="schema.comment" placeholder="comment"></textarea>
     <input type=button (click)="save()" value="save"/>
 </div>`,
-  style: ['div{z-index:5;} label{display:block;}']
+  styles: ['div{z-index:5;} label{display:block;}']
 })
 export class SchemaManagerComponent implements OnInit {
     schema;
-    @Input() id:number;
+    @Input() model;
     users:string[]=[];
     constructor(
         private pgService:PgService
@@ -37,7 +37,7 @@ export class SchemaManagerComponent implements OnInit {
             });
             console.log(this.users);
         })
-        if (!this.id){
+        if (true){
             this.schema={
                 id:null,
                 name:"teste",
