@@ -3,6 +3,7 @@ export class PanelModel{
     type:string
     active:boolean
     title:string
+    activateDeactivate:number=0
 }
 
 export var PanelsService = {
@@ -12,6 +13,7 @@ export var PanelsService = {
     active: null as PanelModel,
 
     add(tab:PanelModel) {
+        tab.activateDeactivate = 0
         if ( PanelsService.active )
             PanelsService.active.active = false;
         PanelsService.models = [tab].concat(PanelsService.models)
@@ -22,6 +24,7 @@ export var PanelsService = {
     activate(tab:PanelModel) {
         if ( tab === this.active )return;
         tab.active = true
+        tab.activateDeactivate++
         if ( PanelsService.active )
             PanelsService.active.active = false;
         PanelsService.active = tab;

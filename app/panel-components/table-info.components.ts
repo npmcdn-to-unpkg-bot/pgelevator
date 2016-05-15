@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core'
 import {PanelModel} from "../services/panels.service";
 
-export class TableInfoPanelModel implements PanelModel{
+export class TableInfoPanelModel extends PanelModel{
     type = "table-info";
     active;
     title

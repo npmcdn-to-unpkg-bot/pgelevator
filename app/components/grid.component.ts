@@ -19,6 +19,7 @@ import { Component, ElementRef, Input } from '@angular/core';
 export class GridComponent{
 
     @Input() result
+    @Input() fitLayout=0
     
     ROW_HEIGHT = 21
     el:HTMLElement
@@ -31,18 +32,27 @@ export class GridComponent{
         this.fit()
     }
     timeout
+    lastTop = 0
     scroll = () => {
-        if ( this.div ) {
+        if ( this.div && this.div.scrollLeft ) {
             var header = this.el.querySelector('.grid-header') as HTMLElement;
             if ( header)
-                header.style.marginLeft = '-' + this.div.scrollLeft + 'px'
+                header.style.marginLeft = this.div.scrollLeft == 0 ? '0': '-' + this.div.scrollLeft + 'px'
         }
+        // if ( this.div.scrollTop == this.lastTop )return
+        // this.lastTop = this.div.scrollTop;
+
         clearTimeout(this.timeout)
         this.timeout = setTimeout(()=>{
+            if ( !this.result ) {
+                return
+            }
+            var left = this.div && this.div.scrollLeft;
             this.calculatePart();
             this.innerDiv.innerHTML = this.html()
             this.putInPosition()
             this.fit()
+            this.div.scrollLeft = left;
         },250)
     }
     
@@ -52,20 +62,28 @@ export class GridComponent{
     ngOnInit(){
         this.buildResult()
     }
+    timeout2
     ngOnChanges(changes) {
-        this.buildResult()
+        if ( changes.result )
+            this.buildResult()
+        else if ( changes.fitLayout ) {
+            clearTimeout(this.timeout2)
+            this.timeout2 = setTimeout(()=> {
+                this.fit()
+            },20);
+        }
     }
     ngAfterViewInit(){
         this.fit()
     }
+
     buildResult(){
         window.removeEventListener('resize',this.resize)
         this.div && this.div.removeEventListener('scroll',this.scroll)
         if ( !this.result ) {
-            this.el.innerHTML = ''
-            if (this.headerTable) this.headerTable.innerHTML = ''
             return
         }
+        var left = this.div && this.div.scrollLeft;
         this.el.innerHTML = '<div><div style=overflow:hidden></div></div><table class=grid-header></table>'
         this.headerTable = this.el.querySelector('.grid-header') as HTMLElement
         this.div = this.el.querySelector('div') as HTMLElement
@@ -76,7 +94,9 @@ export class GridComponent{
         this.cloneHeader();
         window.addEventListener('resize',this.resize);
         this.div.addEventListener('scroll',this.scroll)
-        this.innerDiv.style.height = Math.round(this.ROW_HEIGHT*(this.result.rows.length-1)+1).toLocaleString().replace(/\./g,'') + 'px'
+        this.innerDiv.style.height = Math.round(this.ROW_HEIGHT*(this.result.rows.length)+1).toLocaleString().replace(/\./g,'') + 'px'
+        if ( left )
+            this.div.scrollLeft = left;
         this.fit()
     }
     
@@ -113,6 +133,7 @@ export class GridComponent{
     
     fit(){
         if ( !this.result )return;
+        this.innerDiv.style.width = ''
         var header = this.el.querySelector('.grid-header') as HTMLElement;
         var contentTable = this.el.querySelector('.content-table') as HTMLElement;
         var hiddenHeader = this.el.querySelector('.content-table thead') as HTMLElement;
@@ -123,6 +144,7 @@ export class GridComponent{
             (headerThs[c] as HTMLElement).style.width =
                 (hiddenThs[c] as HTMLElement).offsetWidth+'px'; 
         }
+        header.style.marginLeft = this.div.scrollLeft ? '-'+this.div.scrollLeft+'px':'0'
         header.style.width = contentTable.offsetWidth+'px'
         this.innerDiv.style.width = contentTable.offsetWidth+'px'
     }
@@ -135,7 +157,7 @@ export class GridComponent{
             h.push('</th>')
         })
         h.push('</tr></thead><tbody>');
-        for ( var c=this.start; c < this.end && c < this.result.rows.length; c++ ) {
+        for ( var c=this.start; c <= this.end && c < this.result.rows.length; c++ ) {
             var row = this.result.rows[c];
             h.push('<tr>')
             row.forEach((cell)=>{

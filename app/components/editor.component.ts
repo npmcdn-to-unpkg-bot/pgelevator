@@ -1,5 +1,4 @@
-import { Component, ElementRef, Input } from '@angular/core';
-
+import { Component, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
     selector: 'editor',
@@ -7,17 +6,19 @@ import { Component, ElementRef, Input } from '@angular/core';
 })
 export class EditorComponent {
     
-    @Input() code
+    @Output() code:EventEmitter = new EventEmitter()
     codeMirror: CodeMirror;
     constructor(private el:ElementRef){ }
 
     ngAfterViewInit(){
         this.codeMirror = CodeMirror( this.el.nativeElement, {
-            value: "SELECT * \nFROM funcionario\nWHERE chave = \"9798765T4\"",
+            value: "",
             lineNumbers: true,
             mode:  "text/x-sql"
         } );
-    }
-    ngOnChanges(changes){
+        this.codeMirror.on('change',(v)=>{
+            this.code.emit(v.getValue())
+        })
+        this.code.emit('')
     }
 }

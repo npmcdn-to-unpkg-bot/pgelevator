@@ -1,5 +1,5 @@
 interface CodeMirror{
-    
+    on(type:string,handler:Function)
 }
 declare function CodeMirror(element:HTMLElement,options?:{
     value?:string,
