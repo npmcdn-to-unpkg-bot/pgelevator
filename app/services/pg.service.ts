@@ -106,8 +106,8 @@ export class PgService{
                             GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
                             ORDER BY table_schema, table_type, table_name
                 ) AS t ON t.db=s.catalog_name AND t.schema_name=s.schema_name
-
                 WHERE catalog_name = $1 and (n.nspname !~ '^pg_' OR n.nspname='pg_catalog') 
+                ORDER BY s.schema_name, t.table_type,t.table_name
                 `;
         return this.query(sql, dbName)
     }
@@ -128,7 +128,7 @@ export class PgService{
             table_catalog= $1 AND table_schema = $2
             AND table_type in ('BASE TABLE', 'VIEW')
             GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
-            ORDER BY table_schema,table_name;`;
+            ORDER BY table_schema,table_type,table_name;`;
         return this.query(sql, dbName, schemaName)
     }
     listSequences(dbName:string, schemaName:string){
