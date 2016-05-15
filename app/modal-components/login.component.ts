@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import {PgService} from "../services/pg.service";
 
 
 @Component({
@@ -91,8 +92,19 @@ export class LoginComponent  {
                 this.containError = false
             },200)
         },2000)
+
+
     }
     special(){
+        PgService.connect({
+            hostName: 'localhost',
+            dbName: 'pgadmin',
+            user: 'postgres',
+            password: '12345678',
+            port: 5432
+        }).subscribe((res) => {
+            console.log(res)
+        })
         if ( this.processing )return;
 
     }

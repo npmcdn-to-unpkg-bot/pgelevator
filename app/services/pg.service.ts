@@ -44,6 +44,7 @@ function req(url,d){
     xhr.setRequestHeader('Accept','application/json');
     xhr.setRequestHeader('Content-Type','application/json');
     xhr.withCredentials = true;
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 ) {
             try {
@@ -67,7 +68,7 @@ function req(url,d){
     };
     xhr.open("GET", url, true);
     xhr.send(JSON.stringify(d));
-    return Observable.create(function(obs){
+        return Observable.create(function(obs){
         subs.push(obs);
 
         return function(){
@@ -78,23 +79,19 @@ function req(url,d){
 
 export var PgService = {
     
-    types: null as {[_:string]:PgType}, //
+    types: null as {[_:string]:PgType}, 
+    
+    connect(config){
+        return req('//localhost:4000/connect', config);
+    },
 
     query(query:string, ...values:any[]){
         let options = new RequestOptions({ headers: new Headers(
             {'Content-Type': 'application/json', useCredentials: true})
         });
 
-
-        return this.http
-            .post('http://localhost:4000/sql',
-                JSON.stringify({sql: query, values: values}),
-                options
-            )
-            .map((res: Response) => {
-                console.log(res.headers.get('set-cookie'))
-                return res.json() || {};
-            })
+        
+        return req('http://localhost:4000/sql', {sql: query, values: values})
     },
     
     listDatabases(){
