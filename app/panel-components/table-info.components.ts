@@ -44,7 +44,7 @@ export class TableInfoPanelModel extends PanelModel{
                         <input [class.editable]="c[16]" type=text [(ngModel)]="c[1]" [readonly]="!c[16]"/>
                     </td>
                     <td>{{c[4]}}</td>
-                    <td><input type=checkbox [(ngModel)]="c[6]"/></td>
+                    <td><input type=checkbox [(ngModel)]="c[6]" *ngIf="c[16]"/></td>
                     <td><input [class.editable]="c[16]" type=text [(ngModel)]="c[15]" [readonly]="!c[16]"/></td>
                 </tr>
             </tbody>
@@ -68,7 +68,7 @@ export class TableInfoPanelModel extends PanelModel{
                 </tr>
             </tbody>
         </table>
-        <span (click)="newField()"><i class="fa fa-plus"></i> add</span>
+        <span *ngIf="!newone" (click)="newField()"><i class="fa fa-plus"></i> add</span>
         
         <h2>Indexes</h2>
         <table>
