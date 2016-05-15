@@ -211,6 +211,50 @@ export var PgService = {
             AND pg_catalog.pg_type_is_visible(t.oid)
             ORDER BY 1, 2;`;
         return this.query(sql)
+
+    },
+    listCols(dbName:string, schemaName:string, tableName:string){
+        let sql=`SELECT ordinal_position, column_name, COLUMNS.data_type, COLUMNS.udt_name udt_type, 
+            CASE WHEN COLUMNS.data_type='ARRAY' THEN e.data_type||'[]' WHEN (column_default ilike 'nextval(%' AND is_nullable='NO') THEN 'serial' ELSE COLUMNS.data_type END field_type,
+            column_default, is_nullable, COLUMNS.character_maximum_length,
+            COLUMNS.numeric_precision, COLUMNS.numeric_scale decimal_precision, c.constraint_type,
+            CASE WHEN c.constraint_type='PRIMARY KEY' THEN 'PK' WHEN c.constraint_type='FOREIGN KEY' THEN 'FK' WHEN c.constraint_type='UNIQUE' THEN 'UN' ELSE null END contraint_display, 
+            c.f_table , c.f_col, c.constraint_name,
+            c1.description, false editing 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            LEFT JOIN (
+                SELECT c.table_catalog db, c.table_schema sch,c.table_name tb,c.column_name col,pgd.description
+                FROM pg_catalog.pg_statio_all_tables as st
+                inner join pg_catalog.pg_description pgd on (pgd.objoid=st.relid)
+                inner join information_schema.columns c on (pgd.objsubid=c.ordinal_position
+                    and  c.table_schema=st.schemaname and c.table_name=st.relname)
+            ) c1 ON c1.db=table_catalog AND c1.sch=table_schema AND c1.tb=table_name AND c1.col=column_name
+            LEFT JOIN information_schema.element_types e
+                ON ((table_catalog, table_schema, table_name, 'TABLE', COLUMNS.dtd_identifier)
+                = (e.object_catalog, e.object_schema, e.object_name, e.object_type, e.collection_type_identifier))
+            LEFT JOIN (
+                SELECT DISTINCT tc.table_catalog dg, tc.constraint_schema sch, 
+                    tc.table_name tb, kcu.column_name col_name, 
+                    CASE WHEN tc.constraint_type='FOREIGN KEY' THEN ccu.table_name ELSE null END AS f_table,
+                    CASE WHEN tc.constraint_type='FOREIGN KEY' THEN ccu.column_name ELSE null END f_col, 
+                    tc.constraint_name, tc.constraint_type
+                FROM information_schema.table_constraints AS tc 
+                JOIN information_schema.key_column_usage AS kcu
+                    ON tc.constraint_name = kcu.constraint_name
+                JOIN information_schema.constraint_column_usage AS ccu
+                    ON ccu.constraint_name = tc.constraint_name
+                    WHERE tc.constraint_type in ('PRIMARY KEY', 'UNIQUE', 'FOREIGN KEY')
+            ) as c ON c.dg=table_catalog AND c.sch=table_schema AND c.tb=table_name AND c.col_name=column_name
+            WHERE table_catalog= $1 AND table_schema= $2 AND table_name = $3 ;`;
+            return this.query(sql, dbName, schemaName, tableName);
+    },
+    listIndexes(schemaName:string, tableName:string){
+        let sql=`select indexrelid, i.indexname idxm, i.indexdef definition, pgd.description
+            from pg_indexes i
+            INNER JOIN pg_statio_all_indexes a ON a.schemaname=i.schemaname AND a.relname=i.tablename AND indexrelname=indexname
+            LEFT JOIN pg_catalog.pg_description pgd on (pgd.objoid=a.indexrelid)
+            where i.schemaname= $1 AND tablename = $2 ;`;
+        return this.query(sql, schemaName, tableName);
     },
 
     listTableMetadata(schemaName:string, tableName:string){
@@ -302,5 +346,20 @@ export var PgService = {
                 }    
             });
         }
+    },
+    dropColumn(schemaName:string, tableName:string, colName:string){
+        let sql='ALTER TABLE "'+schemaName+'"."'+tableName+'" DROP COLUMN IF EXISTS "'+colName+'";'
+        return this.query(sql);
+    },
+    editColumn(schemaName:string, tableName:string, oldName:string, newName:string, comment:string){
+        let sql=' COMMENT ON COLUMN "'+schemaName+'"."'+tableName+'"."'+oldName+'" IS \''+(comment==null?'':comment)+'\'; ';
+        if (oldName!=newName){
+            sql+=' ALTER TABLE "'+schemaName+'"."'+tableName+'" RENAME COLUMN "'+oldName+'" TO "'+newName+'";'
+        }
+        return this.query(sql);
+    },
+    dropConstraint(schemaName:string, tableName:string, keyName:string){
+        let sql='ALTER TABLE "'+schemaName+'"."'+tableName+'" DROP CONSTRAINT "'+keyName+'";';
+        return this.query(sql);
     }
 }
