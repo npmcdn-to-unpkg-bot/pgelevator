@@ -44,7 +44,7 @@ export class TableInfoPanelModel extends PanelModel{
                         <input [class.editable]="c[16]" type=text [(ngModel)]="c[1]" [readonly]="!c[16]"/>
                     </td>
                     <td>{{c[4]}}</td>
-                    <td><input type=checkbox [(ngModel)]="c[6]" *ngIf="c[16]"/></td>
+                    <td><input type=checkbox [(ngModel)]="c[6]" [disabled]="!c[16]"/></td>
                     <td><input [class.editable]="c[16]" type=text [(ngModel)]="c[15]" [readonly]="!c[16]"/></td>
                 </tr>
             </tbody>
@@ -160,7 +160,7 @@ export class TableInfoPanelComponent implements OnInit{
             alert("Please select the type of the new column!");
             return;
         }
-        if (confirm("Confirm new column ?")){
+        if (confirm("Confirm new column?")){
             this.pg.addField(this.model.schemaName, this.model.tableName, this.theNewField).subscribe((res)=>{
                 this.loadCols();
                 this.newone=false;
@@ -197,7 +197,7 @@ export class TableInfoPanelComponent implements OnInit{
             this.cols.original.forEach((f)=>{
                 if(f[0]===field[0]){fo=f;}
             });
-            this.pg.editColumn(this.model.schemaName, this.model.tableName, fo[1], field[1], field[15]).subscribe((res)=>{
+            this.pg.editColumn(this.model.schemaName, this.model.tableName, fo[1], field[1], field[15], field[6]).subscribe((res)=>{
                  this.loadCols();
             });
         }

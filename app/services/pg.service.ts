@@ -373,8 +373,11 @@ export var PgService = {
         let sql='ALTER TABLE "'+schemaName+'"."'+tableName+'" DROP COLUMN IF EXISTS "'+colName+'";'
         return this.query(sql);
     },
-    editColumn(schemaName:string, tableName:string, oldName:string, newName:string, comment:string){
+    editColumn(schemaName:string, tableName:string, oldName:string, newName:string, comment:string, nullable:boolean){
         let sql=' COMMENT ON COLUMN "'+schemaName+'"."'+tableName+'"."'+oldName+'" IS \''+(comment==null?'':comment)+'\'; ';
+        if (!nullable) sql+='ALTER TABLE "'+schemaName+'"."'+tableName+'" ALTER COLUMN "'+oldName+'" SET NOT NULL;'
+        else sql+='ALTER TABLE "'+schemaName+'"."'+tableName+'" ALTER COLUMN "'+oldName+'" DROP NOT NULL;'
+        
         if (oldName!=newName){
             sql+=' ALTER TABLE "'+schemaName+'"."'+tableName+'" RENAME COLUMN "'+oldName+'" TO "'+newName+'";'
         }
