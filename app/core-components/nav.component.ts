@@ -7,10 +7,11 @@ import {ModalsService} from '../services/modals.service';
   template: `
    <input type=button value='new schema' (click)='newSchemaModal(0)'/>
     <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open" [class.arrow]="schema.tables.length!==0">
-      <div class="schema-name" (click)="open(schema)" >{{schema.name}} <span class='edit-schema' (click)='newSchemaModal(schema.id)'>E</span></div>
-      <script>console.log({{schema}})</script>
+      <div class="schema-name" (click)="open(schema)" >{{schema.name}} <span class='edit-schema' (click)='newSchemaModal(schema.id);$event.stopPropagation()'><i class='fa fa-edit'></i></span></div>
       <div class="table" *ngFor="let table of schema.tables">
-        {{table.name}} <sup>{{table.type}}</sup>
+        <i class="table-type fa" [class.fa-table]="table.type=='BASE TABLE'" [class.fa-eye]="table.type=='VIEW'"></i>
+        {{table.name}}<sup>{{table.type}}</sup>
+        <i class='table-info fa fa-info-circle' *ngIf="table.type=='BASE TABLE'"></i> 
       </div>
     </div>
   `,
@@ -31,6 +32,8 @@ import {ModalsService} from '../services/modals.service';
     }
     .schema sup { font-size: 8px }
     .table, .schema-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .table-type{display:inline-block;font-size:11px;margin-right:5px;}
+    .edit-schema, .table-info{font-size:12px; display:inline-block;margin-left:5px;}
   `]
 })
 export class NavComponent {
@@ -55,17 +58,17 @@ export class NavComponent {
           var tmp = {}, result = [];
           if (res.rows) {
             res.rows.forEach((val) => {
-                let sname = val[1]
+                let sname = val[1];
                 if (typeof tmp[sname] == 'undefined'){
                     tmp[sname] = {tables: [], id:val[8]}
+                    if (val[2]!=null) tmp[sname].tables.push({name: val[2], type: val[3]});
                 } else {
                     tmp[sname].tables.push({name: val[2], type: val[3]});
                     tmp[sname].id=val[8];
                 }
             });
-            
             for(var schema in tmp){
-                let obj = {name: schema, tables: [], open: false}
+                let obj = {name: schema, tables: [], open: false, id:tmp[schema].id}
                 if (tmp[schema].tables.length === 0) {
                     this.schemas.push(obj);    
                 }else{

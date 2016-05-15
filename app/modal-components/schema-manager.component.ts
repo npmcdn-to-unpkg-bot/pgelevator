@@ -1,10 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PgService } from '../services/pg.service';
+import {ModalsService} from '../services/modals.service';
 
 @Component({
   selector: 'schema-manager',
   template: `<div>
-    <label>Id: {{schema.id}}</label>
+    <label *ngIf="schema.id">Id: {{schema.id}}</label>
     <label class="sch-name">
         Schema name <input type=text [(ngModel)]="schema.name" placeholder="name"/>
     </label>
@@ -21,7 +22,13 @@ import { PgService } from '../services/pg.service';
   styles: ['div{z-index:5;} label{display:block;}']
 })
 export class SchemaManagerComponent implements OnInit {
-    schema;
+    schema={id:null,
+            name:null,
+            oldName:null,
+            owner:"postgres",
+            comment:null,
+            database:"pgadmin"
+            };
     @Input() model;
     users:string[]=[];
     constructor(
@@ -36,21 +43,16 @@ export class SchemaManagerComponent implements OnInit {
                 this.users.push(u[0]);
             });
         })
-        if (this.model.schemaId==0){
-            this.schema={
-                name:null,
-                owner:"postgres",
-                comment:null,
-                database:"pgadmin"
-            }
-        }else{
-            console.log(this.model);
-            this.pgService.getSchema(this.model.schemaId).subscribe((s)=>{
+        if (this.model.schemaId!=0){
+            this.pgService.getSchema(this.model.schemaId).subscribe((schema)=>{
+                let s=schema.rows[0];
                 this.schema={
-                    name:s.schema_name,
-                    owner:s.schema_owner,
-                    comment:"",
-                    database:"postal"
+                    id:s[0],
+                    name:s[1],
+                    oldName:s[1],
+                    owner:s[2],
+                    comment:s[3],
+                    database:this.schema.database
                 }
             })
         }
@@ -59,17 +61,20 @@ export class SchemaManagerComponent implements OnInit {
     
     save(){
         let me=this;
+        let valid=true;
           me.pgService.listSchemas(me.schema.database).subscribe(function(schemas){
-             if(schemas.rows.length>0){
                  schemas.rows.forEach(function(r){
-                     if(me.schema.name==r.name){
+                     if((me.schema.id==null || (me.schema.id!=null && me.schema.name!=me.schema.oldName)) && me.schema.name==r[1]){
                          alert("Sorry, this schema name is already being used!");
-                         return;
+                         valid=false;
                      }
                  })
+             if(valid){
+                me.pgService.manageSchema(me.schema);
+                ModalsService.schemaManager = null;
              }
-             me.pgService.manageSchema(me.schema);
          });
+          
         
     }
  
