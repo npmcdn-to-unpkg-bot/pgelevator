@@ -29,7 +29,7 @@ export class SchemaManagerComponent implements OnInit {
             oldName:null,
             owner:"postgres",
             comment:null,
-            database:"pgadmin"
+            database:""
             };
     @Input() model;
     users:string[]=[];

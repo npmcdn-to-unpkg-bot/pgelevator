@@ -28,8 +28,7 @@ export class TableInfoPanelModel extends PanelModel{
                     <td class="field-col">Field</td>
                     <td class="type-col">Type</td>
                     <td class="null-col">Nullable</td>
-                    <td class="len-col">Length</td>
-                    <td class="prec-col">Precision</td>
+                    <td class="desc-col">Description</td>
                 </tr>
             </thead>
             <tbody *ngFor="let c of cols.current">
@@ -37,29 +36,39 @@ export class TableInfoPanelModel extends PanelModel{
                     <td class="action-icons">
                         <i class="fa fa-edit" (click)="editField(c)"  *ngIf="!c[16]"></i>
                         <i class="fa fa-save" (click)="saveField(c)"  *ngIf="c[16]"></i>
+                        <i class="fa fa-trash" (click)="deleteField(c)" *ngIf="!c[16]"></i>
+                        <i class="fa fa-ban" (click)="cancelEdit(c)" *ngIf="c[16]"></i>
                     </td>
                     <td>{{c[11]}} <sup *ngIf="c[16] && c[11]!=null"><i class="fa fa-close" (click)="removeKey(c)"></i></sup></td>
                     <td>
                         <input [class.editable]="c[16]" type=text [(ngModel)]="c[1]" [readonly]="!c[16]"/>
                     </td>
                     <td>{{c[4]}}</td>
-                    <td>{{c[6]}}</td>
-                    <td>{{c[7]==null?c[8]:c[7]}}</td>
-                    <td>{{c[9]}}</td>
-                    
-                </tr>
-                <tr class="description-row">
-                    <td class="action-icons">
-                        <i class="fa fa-trash" (click)="deleteField(c)" *ngIf="!c[16]"></i>
-                        <i class="fa fa-ban" (click)="cancelEdit(c)" *ngIf="c[16]"></i>
-                    </td>
-                    <td colspan=6>
-                        <input [class.editable]="c[16]" type=text [(ngModel)]="c[15]" [readonly]="!c[16]"/>
-                    </td>
+                    <td><input type=checkbox [(ngModel)]="c[6]"/></td>
+                    <td><input [class.editable]="c[16]" type=text [(ngModel)]="c[15]" [readonly]="!c[16]"/></td>
                 </tr>
             </tbody>
-        
+            <tbody *ngIf="newone">
+                <tr>
+                    <td>
+                        <i class="fa fa-save" (click)="saveNewField()"></i>
+                        <i class="fa fa-ban" (click)="cancelNewField()"></i>
+                    </td>
+                    <td></td>
+                    <td>
+                        <input type=text [(ngModel)]="theNewField.name">
+                    </td>
+                    <td>
+                        <select [(ngModel)]="theNewField.dataType">
+                            <option *ngFor="let dt of dTypes" value="{{dt[0]}}">{{dt[0]}}</option>
+                        </select>
+                    </td>
+                    <td><input type=checkbox [(ngModel)]="theNewField.nullable"/></td>
+                    <td><input type=text [(ngModel)]="theNewField.comment"></td>
+                </tr>
+            </tbody>
         </table>
+        <span (click)="newField()"><i class="fa fa-plus"></i> add</span>
         
         <h2>Indexes</h2>
         <table>
@@ -101,7 +110,14 @@ export class TableInfoPanelComponent implements OnInit{
         current:[]
     };
     idx;
-
+    newone:boolean=false;
+    theNewField={
+        name:null,
+        dataType:null,
+        nullable:true,
+        comment:null
+    };
+    dTypes;
     pg =PgService
     
     ngOnInit(){
@@ -109,15 +125,41 @@ export class TableInfoPanelComponent implements OnInit{
         this.pg.listIndexes(this.model.schemaName, this.model.tableName).subscribe((res) => {
             this.idx = res.rows;
         })
+        this.pg.listDataTypes().subscribe((r)=>{
+            console.log(r);
+            this.dTypes=r.rows;
+        })
     }
     
     private loadCols(){
-        this.pg.listCols("pgadmin", this.model.schemaName, this.model.tableName).subscribe((res) => {
+        this.pg.listCols(this.model.schemaName, this.model.tableName).subscribe((res) => {
             this.cols.original = clone(res.rows,true);
             this.cols.current=res.rows;
         })
     }
-    
+    newField(){
+        this.newone=true;
+    }
+    cancelNewField(){
+        this.newone=false;
+        this.theNewField={
+            name:null,
+            dataType:null,
+            nullable:true,
+            comment:null
+        };
+    }
+    saveNewField(){
+        if(this.theNewField.name==null || this.theNewField.name.trim()==""){
+            alert("Please inform the name of the new column!");
+            return;
+        }
+        if(this.theNewField.dataType==null){
+            alert("Please select the type of the new column!");
+            return;
+        }
+        
+    }
     editField(field){
         console.log(this.cols);
         field[16]=true;
