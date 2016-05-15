@@ -43,7 +43,6 @@ function req(url,d) :Observable{
     xhr.withCredentials = true;
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 ) {
-            console.log(subs)
             try {
                 var data = JSON.parse(xhr.responseText);
             }catch (e){

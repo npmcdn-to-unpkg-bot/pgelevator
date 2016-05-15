@@ -94,15 +94,21 @@ export class LoginComponent  {
             password: this.password,
             user: this.username
         }).subscribe((res)=>{
+            this.processing=false
             if ( res && typeof res.connection == 'number' ) {
                 ModalsService.login = null;
             } else {
                 this.containError = true
                 setTimeout(()=>{
-                    this.processing=false
                     this.containError = false
-                },200)
+                },8000)
             }
+        },()=>{
+            this.processing=false
+            this.containError = true
+            setTimeout(()=>{
+                this.containError = false
+            },8000)
         });
     }
     special(){
