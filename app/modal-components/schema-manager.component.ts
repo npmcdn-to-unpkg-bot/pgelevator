@@ -35,20 +35,24 @@ export class SchemaManagerComponent implements OnInit {
             users.rows.forEach((u)=>{
                 this.users.push(u[0]);
             });
-            console.log(this.users);
         })
-        if (true){
+        if (this.model.schemaId==0){
             this.schema={
-                id:null,
-                name:"teste",
+                name:null,
                 owner:"postgres",
-                comment:"",
-                database:"postal"
+                comment:null,
+                database:"pgadmin"
             }
         }else{
-            /**TODO
-             * load db properties
-             */
+            console.log(this.model);
+            this.pgService.getSchema(this.model.schemaId).subscribe((s)=>{
+                this.schema={
+                    name:s.schema_name,
+                    owner:s.schema_owner,
+                    comment:"",
+                    database:"postal"
+                }
+            })
         }
     }
     

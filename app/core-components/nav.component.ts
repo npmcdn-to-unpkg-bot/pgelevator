@@ -5,9 +5,10 @@ import {ModalsService} from '../services/modals.service';
 @Component({
   selector: 'nav',
   template: `
-   <input type=button value='new schema' (click)='newSchemaModal()'/>
+   <input type=button value='new schema' (click)='newSchemaModal(0)'/>
     <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open" [class.arrow]="schema.tables.length!==0">
-      <div class="schema-name" (click)="open(schema)" >{{schema.name}}</div>
+      <div class="schema-name" (click)="open(schema)" >{{schema.name}} <span class='edit-schema' (click)='newSchemaModal(schema.id)'>E</span></div>
+      <script>console.log({{schema}})</script>
       <div class="table" *ngFor="let table of schema.tables">
         {{table.name}} <sup>{{table.type}}</sup>
       </div>
@@ -56,11 +57,13 @@ export class NavComponent {
             res.rows.forEach((val) => {
                 let sname = val[1]
                 if (typeof tmp[sname] == 'undefined'){
-                    tmp[sname] = {tables: []}
+                    tmp[sname] = {tables: [], id:val[8]}
                 } else {
                     tmp[sname].tables.push({name: val[2], type: val[3]});
+                    tmp[sname].id=val[8];
                 }
             });
+            
             for(var schema in tmp){
                 let obj = {name: schema, tables: [], open: false}
                 if (tmp[schema].tables.length === 0) {
@@ -76,7 +79,7 @@ export class NavComponent {
           }
         })
   }
-  newSchemaModal(){
-      ModalsService.schemaManager = {create:true,modelo:'alskdjflskjadf'}
+  newSchemaModal(schemaId:number){
+      ModalsService.schemaManager = {schemaId:schemaId}
   }
 }
