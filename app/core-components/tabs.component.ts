@@ -10,7 +10,8 @@ import {QueryPanelComponent, QueryPanelModel} from "../panel-components/query-pa
       {{tab.title}}
     </span>
     <button (click)=novaConsulta()>Nova Consulta</button>
-  `
+  `,
+  styles: [':host-context{overflow:hidden;}']
 })
 export class TabsComponent {
   PanelsService = PanelsService;

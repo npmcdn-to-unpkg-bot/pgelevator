@@ -21,6 +21,7 @@ export var PanelsService = {
     },
 
     activate(tab:PanelModel) {
+        if ( tab === this.active )return;
         tab.active = true
         if ( PanelsService.active )
             PanelsService.active.active = false;
