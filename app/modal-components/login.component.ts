@@ -28,7 +28,7 @@ import {ModalsService} from "../services/modals.service";
         </div>
         <div class="actions">
             <button [disabled]=processing (click)="connect()">Connect</button>
-            <span *ngIf="containError" style="position:absolute;color:#d00;margin-top:12px;margin-left:6px">Internal error!</span>
+            <span *ngIf="containError" class="connection-error">Internal error!</span>
         </div>
         <div class=special><br>
             <span (click)="special()">Or just try the exaple! (AngularAtack Special [lol])</span>
@@ -45,6 +45,7 @@ import {ModalsService} from "../services/modals.service";
     .special span:hover { color: #000 }
     .error { color: #d00 }
     .error inupt { color: #d00 }
+    .connection-error { position:absolute;color:#d00;margin-top:12px;margin-left:6px }
     
     .shake { animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both; transform: translate3d(0, 0, 0); }
     
@@ -105,16 +106,6 @@ export class LoginComponent  {
         });
     }
     special(){
-        PgService.connect({
-            hostName: 'localhost',
-            dbName: 'pgadmin',
-            user: 'postgres',
-            password: '12345678',
-            port: 5432
-        }).subscribe((res) => {
-            console.log(res)
-        })
-        if ( this.processing )return;
 
     }
 }

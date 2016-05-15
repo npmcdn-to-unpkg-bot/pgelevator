@@ -41,7 +41,6 @@ function req(url,d) :Observable{
     var xhr = new XMLHttpRequest();
     var subs = [] as any[]
     xhr.withCredentials = true;
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 ) {
             console.log(subs)
