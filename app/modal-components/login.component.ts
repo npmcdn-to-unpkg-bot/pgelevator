@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-
+import {PgService} from "../services/pg.service";
+import {ModalsService} from "../services/modals.service";
 
 @Component({
     selector: 'login',
@@ -84,13 +85,25 @@ export class LoginComponent  {
             return;
         }
         this.processing = true;
-        setTimeout(()=>{
-            this.processing=false
-            this.containError = true
-            setTimeout(()=>{
-                this.containError = false
-            },200)
-        },2000)
+
+        PgService.connect({
+            port: this.port,
+            dbName: this.base,
+            hostName: this.host,
+            password: this.password,
+            user: this.username
+        }).subscribe((res)=>{
+            if ( res && typeof res.connection == 'number' ) {
+                ModalsService.login = null;
+            } else {
+                this.containError = true
+                setTimeout(()=>{
+                    this.processing=false
+                    this.containError = false
+                },200)
+            }
+        });
+
     }
     special(){
         if ( this.processing )return;

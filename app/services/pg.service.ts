@@ -41,35 +41,40 @@ interface PgType{
 function req(url,d) :Observable{
     var xhr = new XMLHttpRequest();
     var subs = [] as any[]
-    xhr.setRequestHeader('Accept','application/json');
-    xhr.setRequestHeader('Content-Type','application/json');
     xhr.withCredentials = true;
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 ) {
+            console.log(subs)
             try {
                 var data = JSON.parse(xhr.responseText);
             }catch (e){
                 subs.forEach((o)=>{
-                    o.onNext(data);
+                    o.error(data);
                 });
                 subs = []
             }
             if ( xhr.status == 200) {
                 subs.forEach((o)=>{
-                    o.onNext(data);
+                    o.next(data);
                 });
             } else {
                 subs.forEach((o)=>{
-                    o.onNext(data);
+                    o.error(data);
                 });
             }
+            subs.forEach((o)=>{
+                o.complete();
+            });
+            subs = [];
         }
     };
-    xhr.open("GET", url, true);
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Accept','application/json');
+    xhr.setRequestHeader('Content-Type','application/json');
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xhr.send(JSON.stringify(d));
     return Observable.create(function(obs){
         subs.push(obs);
-
         return function(){
             obs = []
         }
@@ -79,6 +84,19 @@ function req(url,d) :Observable{
 export var PgService = {
     
     types: null as {[_:string]:PgType},
+
+    connectionId:-1,
+
+    connect(param:{port:number; dbName:string; hostName:string; password:string; user:string}) {
+        if ( this.connectionId != -1 )throw 'e!'
+        return req('//159.203.127.218:4000/connect',param).map((d)=>{
+            if ( d.connection ) {
+                if ( this.connectionId != -1 && this.connectionId != d.connection )throw 'e!'
+                PgService.connectionId = d.connection;
+            }
+            return d;
+        });
+    },
 
     query(query:string, ...values:any[]){
 
