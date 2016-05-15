@@ -7,6 +7,7 @@ import 'rxjs/Rx'
 interface Schema {
     id: number;
     name: string;
+    oldName: string;
     owner: string;
     database:string;
     comment:string;
@@ -67,10 +68,11 @@ export class PgService{
     
     listSchemas(dbName:string){
         let sql="SELECT catalog_name db_name, schema_name FROM information_schema.schemata " +
-            "WHERE catalog_name = $1 AND schema_name NOT LIKE 'pg_%';";
+            "WHERE catalog_name = $1 ;";
         return this.query(sql, dbName);
     }
     getSchema(schemaId:number){
+        
         let sql=`SELECT n.oid schema_id, n.nspname AS schema_name,                                          
             pg_catalog.pg_get_userbyid(n.nspowner) AS schema_owner,                 
             pg_catalog.obj_description(n.oid, 'pg_namespace') AS schema_comment 
@@ -104,8 +106,9 @@ export class PgService{
                             GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
                             ORDER BY table_schema, table_type, table_name
                 ) AS t ON t.db=s.catalog_name AND t.schema_name=s.schema_name
-
-                WHERE catalog_name = $1 and (n.nspname !~ '^pg_' OR n.nspname='pg_catalog')`;
+                WHERE catalog_name = $1 and (n.nspname !~ '^pg_' OR n.nspname='pg_catalog') 
+                ORDER BY s.schema_name, t.table_type,t.table_name
+                `;
         return this.query(sql, dbName)
     }
     listTablesFromSchema(dbName:string, schemaName:string){ // and views
@@ -125,7 +128,7 @@ export class PgService{
             table_catalog= $1 AND table_schema = $2
             AND table_type in ('BASE TABLE', 'VIEW')
             GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
-            ORDER BY table_schema,table_name;`;
+            ORDER BY table_schema,table_type,table_name;`;
         return this.query(sql, dbName, schemaName)
     }
     listSequences(dbName:string, schemaName:string){
@@ -224,15 +227,19 @@ export class PgService{
             return this.query(sql);
     }
     manageSchema(schema:Schema){
+        let me=this;
         if (schema.id){ //alter
-            
-        }else{ //create
-            let me=this;
-            let sql="CREATE SCHEMA "+schema.name+" AUTHORIZATION "+schema.owner+" ;"
+            let sql="ALTER SCHEMA \""+schema.oldName+"\" RENAME TO \""+schema.name+"\";"
             me.query(sql).subscribe(function(r){
-                if(schema.comment.length>0) {
-                     sql="COMMENT ON SCHEMA "+schema.name+" IS '"+schema.comment+"' ;";
-                     me.query(sql); 
+                sql="COMMENT ON SCHEMA \""+schema.name+"\" IS '"+(schema.comment==null?'':schema.comment)+"' ;";
+                me.query(sql).subscribe(); 
+            });
+        }else{ //create
+            let sql="CREATE SCHEMA \""+schema.name+"\" AUTHORIZATION "+schema.owner+" ;"
+            me.query(sql).subscribe(function(r){
+                if(schema.comment!=null) {
+                     sql="COMMENT ON SCHEMA \""+schema.name+"\" IS '"+schema.comment+"' ;";
+                     me.query(sql).subscribe(); 
                 }    
             });
         }
