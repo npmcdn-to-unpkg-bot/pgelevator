@@ -38,7 +38,7 @@ interface PgType{
 }
 
 let isLocal = !!window.location.href.match(/^https?:\/\/localhost:3000.*$/gi);
-let serverUri = '//159.203.127.218:4000'
+let serverUri = '//stormy-depths-75551.herokuapp.com'
 
 window.onbeforeunload = (e)=>{
     if ( PgService.connectionId != -1 ) {
