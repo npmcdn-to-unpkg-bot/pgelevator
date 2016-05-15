@@ -18,7 +18,7 @@ import Timer = NodeJS.Timer;
    <tab-content [style.left.px]=left style="position: absolute; top: 30px; bottom: 0; right: 0;"></tab-content>
    <div [style.left.px]="left-2" [style.cursor]="cursor" 
         (mouseenter)="enter()" (mouseleave)="leave()" (mousedown)="mousedown($event)"
-        style="position:absolute;width:4px;top:0;bottom:0;"></div>
+        style="position:absolute;width:4px;top:0;bottom:0;z-index:3"></div>
         <modal-frame></modal-frame>
   `
 })
