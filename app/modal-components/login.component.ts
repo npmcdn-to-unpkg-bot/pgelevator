@@ -2,14 +2,31 @@ import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
     selector: 'login',
-    template: `<div style="width:370px" [class.shake]="shake">
-        <div class="field" [class.error]="hostError"><label for=host>Host: </label><input id="host" [(ngModel)]="host"></div>
-        <div class="field" [class.error]="portError"><label for=port>Port: </label><input id=port [(ngModel)]="port" type="number"></div>
-        <div class="field" [class.error]="baseError"><label for=base>Base: </label><input id=base [(ngModel)]="base"></div>
-        <div class="field" [class.error]="usernameError"><label for=username>Username: </label><input id=username [(ngModel)]="username"></div>
-        <div class="field" [class.error]="passwordError"><label for=password>Password: </label><input id=password [(ngModel)]="password" type="password"></div>
+    template: `
+    <div style="width:370px" [class.shake]="shake" [style.opacity]="processing?0.5:1">
+        <div class="field" [class.error]="hostError">
+            <label for=host>Host: </label>
+            <input id="host" [readonly]="processing" [(ngModel)]="host">
+        </div>
+        <div class="field" [class.error]="portError">
+            <label for=port>Port: </label>
+            <input id=port [readonly]="processing" [(ngModel)]="port" type="number">
+        </div>
+        <div class="field" [class.error]="baseError">
+            <label for=base>Base: </label>
+            <input id=base [readonly]="processing" [(ngModel)]="base">
+        </div>
+        <div class="field" [class.error]="usernameError">
+            <label for=username>Username: </label>
+            <input id=username [readonly]="processing" [(ngModel)]="username">
+        </div>
+        <div class="field" [class.error]="passwordError">
+            <label for=password>Password: </label>
+            <input id=password [readonly]="processing" [(ngModel)]="password" type="password">
+        </div>
         <div class="actions">
-            <button (click)="connect()">Connect</button>
+            <button [disabled]=processing (click)="connect()">Connect</button>
+            <span *ngIf="containError" style="position:absolute;color:#d00;margin-top:12px;margin-left:6px">Internal error!</span>
         </div>
         <div class=special><br>
             <span (click)="special()">Or just try the exaple! (AngularAtack Special [lol])</span>
@@ -50,6 +67,8 @@ export class LoginComponent  {
     usernameError=false;
     passwordError=false
     shake = false
+    processing = false;
+    containError = false;
 
     connect(){
         this.port =  parseInt(this.port+'')
@@ -63,8 +82,17 @@ export class LoginComponent  {
             setTimeout(()=>{this.shake=false},400)
             return;
         }
+        this.processing = true;
+        setTimeout(()=>{
+            this.processing=false
+            this.containError = true
+            setTimeout(()=>{
+                this.containError = false
+            },200)
+        },2000)
     }
     special(){
+        if ( this.processing )return;
 
     }
 }

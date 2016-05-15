@@ -45,7 +45,7 @@ export class PgService{
     types:{[_:string]:PgType}
 
     constructor(public http:Http){
-        this.getTypes()
+        // this.getTypes()
     }
     
     query(query:string, ...values:any[]){
