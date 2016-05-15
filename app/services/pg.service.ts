@@ -70,9 +70,18 @@ function req(url,d) :Observable{
     xhr.setRequestHeader('Accept','application/json');
     xhr.setRequestHeader('Content-Type','application/json');
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    xhr.send(JSON.stringify(d));
-        return Observable.create(function(obs){
-        subs.push(obs);
+    var error = null;
+    try {
+        xhr.send(JSON.stringify(d));
+    }catch(e){
+        error = e;
+    }
+    return Observable.create(function(obs){
+        if ( error ) {
+            obs.error(error)
+            obs.complete();
+        }else
+            subs.push(obs);
         return function(){
             obs = []
         }
