@@ -1,6 +1,6 @@
 body { font-family: sans-serif; cursor: default }
 * {box-sizing: border-box }
-
+#loading span{display:block;margin-top: 10px;}
 nav { background: #ddd }
 .schema-name:hover, .table:hover { background: #bbb }
 .table-name { font-size: 13px }
