@@ -35,7 +35,7 @@ export var PanelsService = {
         if ( this.active == tab ) {
             tab.active = false;
             this.active = this.models[0] || null;
-            this.active.active = true;
+            this.active && this.active.active = true;
         }
     }
 }
