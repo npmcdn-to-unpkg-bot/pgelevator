@@ -10,6 +10,12 @@ interface Schema {
     database:string;
     comment:string;
 }
+interface newField{
+            name:string;
+            dataType:string;
+            nullable:boolean;
+            comment:string;
+        };
 // interface Database {
 //     id: number;
 //     name: string;
@@ -376,6 +382,12 @@ export var PgService = {
     },
     dropConstraint(schemaName:string, tableName:string, keyName:string){
         let sql='ALTER TABLE "'+schemaName+'"."'+tableName+'" DROP CONSTRAINT "'+keyName+'";';
+        return this.query(sql);
+    },
+    addField(schemaName:string, tableName:string, f:newField){
+        let sql='ALTER TABLE "'+schemaName+'"."'+tableName+'" ADD COLUMN "'+f.name+'" '+f.dataType+';';
+        if (f.nullable) sql+='ALTER TABLE "'+schemaName+'"."'+tableName+'" ALTER COLUMN "'+f.name+'" SET NOT NULL;'
+        sql+=' COMMENT ON COLUMN "'+schemaName+'"."'+tableName+'"."'+f.name+'" IS \''+(f.comment==null?'':f.comment)+'\'; ';
         return this.query(sql);
     }
 }
