@@ -1,5 +1,4 @@
 import {Http, Response, RequestOptions, Headers} from '@angular/http';
-import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx'
 
@@ -39,11 +38,50 @@ interface PgType{
     name:string
 }
 
+function req(url,d){
+    var xhr = new XMLHttpRequest();
+    var subs = [] as any[]
+    xhr.setRequestHeader('Accept','application/json');
+    xhr.setRequestHeader('Content-Type','application/json');
+    xhr.withCredentials = true;
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 ) {
+            try {
+                var data = JSON.parse(xhr.responseText);
+            }catch (e){
+                subs.forEach((o)=>{
+                    o.onNext(data);
+                });
+                subs = []
+            }
+            if ( xhr.status == 200) {
+                subs.forEach((o)=>{
+                    o.onNext(data);
+                });
+            } else {
+                subs.forEach((o)=>{
+                    o.onNext(data);
+                });
+            }
+        }
+    };
+    xhr.open("GET", url, true);
+    xhr.send(JSON.stringify(d));
+    return Observable.create(function(obs){
+        subs.push(obs);
+
+        return function(){
+            obs = []
+        }
+    })
+}
+
 export var PgService = {
     
     types: null as {[_:string]:PgType}, //
-    
+
     query(query:string, ...values:any[]){
+
         let options = new RequestOptions({ headers: new Headers({'Content-Type': 'application/json'}) });
 
         return this.http
