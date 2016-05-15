@@ -5,12 +5,8 @@ import { Component, ElementRef, Input } from '@angular/core';
     template: '',
     styles: [`
         :host-context{position:absolute;left:0;top:0;bottom:0;right:0; overflow:hidden }
-        :host-context table {  border-collapse:collapse; }
         :host-context table.content-table { width:100%; }
         :host-context table.content-table thead { visibility: hidden; }
-        :host-context th, :host-context td {
-            white-space: nowrap; height: 21px; 
-            border-width: 1px; border-style: solid }
         :host-context>div {
             position:absolute;left:0; bottom:0;right:0;overflow: auto
         }

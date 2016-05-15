@@ -23,13 +23,13 @@ export class TableInfoPanelModel extends PanelModel{
         <table class="field-table">
             <thead>
                 <tr>
-                    <td class="act-col">::</td>
-                    <td class="key-col">key</td>
-                    <td class="field-col">Field</td>
-                    <td class="type-col">Type</td>
-                    <td class="null-col">Nullable</td>
-                    <td class="len-col">Length</td>
-                    <td class="prec-col">Precision</td>
+                    <th class="act-col">::</th>
+                    <th class="key-col">key</th>
+                    <th class="field-col">Field</th>
+                    <th class="type-col">Type</th>
+                    <th class="null-col">Nullable</th>
+                    <th class="len-col">Length</th>
+                    <th class="prec-col">Precision</th>
                 </tr>
             </thead>
             <tbody *ngFor="let c of cols.current">
@@ -65,9 +65,9 @@ export class TableInfoPanelModel extends PanelModel{
         <table>
             <thead>
                 <tr>
-                    <td>Index</td>
-                    <td>Definition</td>
-                    <td>Comment</td>
+                    <th>Index</th>
+                    <th>Definition</th>
+                    <th>Comment</th>
                 </tr>
             </thead>
             <tbody>
@@ -82,14 +82,11 @@ export class TableInfoPanelModel extends PanelModel{
         
         
 ` ,
-    styles: [`.field-table {width: 100%;border-collapse:collapse;}
-        .field-table thead tr{background-color:blue; color:white;}
+    styles: [`
         .field-table input{width:100%; background:none; border:none; border-bottom:1px solid transparent;}
         .field-table input.editable{border-bottom:1px solid blue;}
-        .field-table tbody {border:1px solid #ccc;}
         .field-table .action-icons{text-align:center;}
-                
-                `],
+    `],
     directives: [],
     selector: 'table-info'
 })

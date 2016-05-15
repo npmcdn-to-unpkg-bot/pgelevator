@@ -7,7 +7,9 @@ nav { background: #ddd }
 
 tabs { background: #ddd; }
 
-grid th, grid td { hegiht: 22px; font-size: 13px; }
+grid table {  border-collapse:collapse; }
+grid th, grid td { white-space: nowrap; height: 21px; border-width: 1px; border-style: solid }
+grid th, grid td { height: 22px; font-size: 13px; }
 grid table thead { background: rgb(25,118,210); color: white; }
 grid table th { border-color: rgba(0,0,0,.08); font-weight: normal }
 grid td { border-color: #ddd}
@@ -18,3 +20,13 @@ grid .string { color: #080 }
 grid .number { color: #d08 }
 grid .boolean { color: #008 }
 grid .null { opacity: .5; }
+
+
+table-info table {  border-collapse:collapse; }
+table-info th, table-info td { white-space: nowrap; height: 21px; border-width: 1px; border-style: solid }
+table-info th, table-info td { height: 22px; font-size: 13px; }
+table-info table thead { background: rgb(25,118,210); color: white; }
+table-info table th { border-color: rgba(0,0,0,.08) !important; font-weight: normal }
+table-info td { border-color: #ddd}
+table-info tr:nth-child(2n) { background: #eee }
+table-info th { padding-left: 10px; padding-right: 10px;}
