@@ -3,7 +3,7 @@ import {ModalsService} from '../services/modals.service';
 
 @Component({
     selector: 'modal',
-    template: `<div class="modal-content"><h3 class='modal-close'><i class='fa fa-close' (click)='close()'></i></h3><ng-content></ng-content></div>`,
+    template: `<div class="modal-content"><ng-content></ng-content></div>`,
     styles: [`
         :host-context { content: ''; position: fixed; background: rgba(0,0,0,.5); left: 0; top: 0; bottom: 0;
             right: 0; z-index: 5; }
@@ -13,5 +13,4 @@ import {ModalsService} from '../services/modals.service';
     `]
 })
 export class ModalComponent {
-    close(){ModalsService.schemaManager=null;}
 }

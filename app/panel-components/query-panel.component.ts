@@ -26,9 +26,8 @@ export class QueryPanelComponent{
 
     @Input() model
     code:string
+    pg = PgService
     private result;
-
-    constructor(private pg:PgService){}
     
     executar(){
         this.pg.query(this.code)

@@ -1,4 +1,5 @@
 
 export var ModalsService = {
-    schemaManager: null
+    schemaManager: null,
+    login: true
 }

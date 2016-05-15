@@ -1,5 +1,3 @@
-import {Http, Response, RequestOptions, Headers} from '@angular/http';
-import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx'
 
@@ -39,38 +37,88 @@ interface PgType{
     name:string
 }
 
-@Injectable()
-export class PgService{
-    
-    types:{[_:string]:PgType}
-
-    constructor(public http:Http){
-        this.getTypes()
+function req(url,d) :Observable{
+    var xhr = new XMLHttpRequest();
+    var subs = [] as any[]
+    xhr.withCredentials = true;
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 ) {
+            try {
+                var data = JSON.parse(xhr.responseText);
+            }catch (e){
+                subs.forEach((o)=>{
+                    o.error(data);
+                });
+                subs = []
+            }
+            if ( xhr.status == 200) {
+                subs.forEach((o)=>{
+                    o.next(data);
+                });
+            } else {
+                subs.forEach((o)=>{
+                    o.error(data);
+                });
+            }
+            subs.forEach((o)=>{
+                o.complete();
+            });
+            subs = [];
+        }
+    };
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Accept','application/json');
+    xhr.setRequestHeader('Content-Type','application/json');
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    var error = null;
+    try {
+        xhr.send(JSON.stringify(d));
+    }catch(e){
+        error = e;
     }
+    return Observable.create(function(obs){
+        if ( error ) {
+            obs.error(error)
+            obs.complete();
+        }else
+            subs.push(obs);
+        return function(){
+            obs = []
+        }
+    })
+}
+
+export var PgService = {
     
+    types: null as {[_:string]:PgType},
+
+    connectionId:-1,
+
+    connect(param:{port:number; dbName:string; hostName:string; password:string; user:string}) {
+        if ( this.connectionId != -1 )throw 'e!'
+        return req('//159.203.127.218:4000/connect',param).map((d)=>{
+            if ( d.connection ) {
+                if ( this.connectionId != -1 && this.connectionId != d.connection )throw 'e!'
+                PgService.connectionId = d.connection;
+            }
+            return d;
+        });
+    },
+
     query(query:string, ...values:any[]){
-        let options = new RequestOptions({ headers: new Headers({'Content-Type': 'application/json'}) });
-
-        return this.http
-            .post('http://localhost:4000/sql',
-                JSON.stringify({sql: query, values: values}),
-                options
-            )
-            .map((res: Response) => {
-                return res.json() || {};
-            })
-    }
+        return req('//159.203.127.218:4000/sql', {userId: this.connectionId, sql: query, values: values})
+    },
     
     listDatabases(){
         let sql="SELECT DISTINCT catalog_name db_name FROM information_schema.schemata;";
         return this.query(sql);
-    }
+    },
     
     listSchemas(dbName:string){
         let sql="SELECT catalog_name db_name, schema_name FROM information_schema.schemata " +
             "WHERE catalog_name = $1 ;";
         return this.query(sql, dbName);
-    }
+    },
     getSchema(schemaId:number){
         
         let sql=`SELECT n.oid schema_id, n.nspname AS schema_name,                                          
@@ -80,7 +128,7 @@ export class PgService{
             WHERE n.oid = $1      
             ORDER BY 1;`;
         return this.query(sql, schemaId);
-    }
+    },
     
     listTables(dbName:string)   { // and views
         let sql=`SELECT s.catalog_name db, s.schema_name, t.table_name, t.table_type, t.is_insertable_into, t.is_typed, 
@@ -110,7 +158,7 @@ export class PgService{
                 ORDER BY s.schema_name, t.table_type,t.table_name
                 `;
         return this.query(sql, dbName)
-    }
+    },
     listTablesFromSchema(dbName:string, schemaName:string){ // and views
         let sql=`SELECT table_catalog db, table_schema schema_name,table_name,  
             table_type, is_insertable_into, is_typed,
@@ -130,17 +178,17 @@ export class PgService{
             GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
             ORDER BY table_schema,table_type,table_name;`;
         return this.query(sql, dbName, schemaName)
-    }
+    },
     listSequences(dbName:string, schemaName:string){
         let sql=`SELECT *, sequence_name, data_type, minimum_value, maximum_value, start_value FROM information_schema.sequences 
             WHERE sequence_catalog= $1 AND sequence_schema= $2 ;`
         return this.query(sql, dbName, schemaName)
-    }
+    },
     listFunctions(schemaName:string){
         let sql=`SELECT  p.proname FROM    pg_catalog.pg_namespace n
             JOIN pg_catalog.pg_proc p ON p.pronamespace = n.oid WHERE n.nspname = $1 `;
         return this.query(sql, schemaName)
-    }
+    },
     listDataTypes(){
         let sql=`SELECT n.nspname as "Schema",
             pg_catalog.format_type(t.oid, NULL) AS "Name",
@@ -152,7 +200,8 @@ export class PgService{
             AND pg_catalog.pg_type_is_visible(t.oid)
             ORDER BY 1, 2;`;
         return this.query(sql)
-    }
+
+    },
     listCols(dbName:string, schemaName:string, tableName:string){
         let sql=`SELECT ordinal_position, column_name, COLUMNS.data_type, COLUMNS.udt_name udt_type, 
             CASE WHEN COLUMNS.data_type='ARRAY' THEN e.data_type||'[]' WHEN (column_default ilike 'nextval(%' AND is_nullable='NO') THEN 'serial' ELSE COLUMNS.data_type END field_type,
@@ -187,7 +236,7 @@ export class PgService{
             ) as c ON c.dg=table_catalog AND c.sch=table_schema AND c.tb=table_name AND c.col_name=column_name
             WHERE table_catalog= $1 AND table_schema= $2 AND table_name = $3 ;`;
             return this.query(sql, dbName, schemaName, tableName);
-    }
+    },
     listIndexes(schemaName:string, tableName:string){
         let sql=`select indexrelid, i.indexname idxm, i.indexdef definition, pgd.description
             from pg_indexes i
@@ -195,7 +244,8 @@ export class PgService{
             LEFT JOIN pg_catalog.pg_description pgd on (pgd.objoid=a.indexrelid)
             where i.schemaname= $1 AND tablename = $2 ;`;
         return this.query(sql, schemaName, tableName);
-    }
+    },
+
     listTableMetadata(schemaName:string, tableName:string){
         let sql =`
             SELECT DISTINCT
@@ -221,7 +271,7 @@ export class PgService{
             AND nsp.nspname = $1 AND pgc.relname = $2 
             ORDER BY a.attnum;`
         return this.query(sql, schemaName, tableName);
-    }
+    },
 
     getTypes(){
         let sql = `
@@ -256,7 +306,7 @@ export class PgService{
                 });
             }
         });
-    }
+    },
     listUsers(){
         let sql=`SELECT u.usename AS user_name,
             u.usesysid AS user_id, 
@@ -267,7 +317,7 @@ export class PgService{
             END AS user_attr
             FROM pg_catalog.pg_user u`;
             return this.query(sql);
-    }
+    },
     manageSchema(schema:Schema){
         let me=this;
         if (schema.id){ //alter
@@ -285,18 +335,18 @@ export class PgService{
                 }    
             });
         }
-    }
+    },
     dropColumn(schemaName:string, tableName:string, colName:string){
         let sql='ALTER TABLE "'+schemaName+'"."'+tableName+'" DROP COLUMN IF EXISTS "'+colName+'";'
         return this.query(sql);
-    }
+    },
     editColumn(schemaName:string, tableName:string, oldName:string, newName:string, comment:string){
         let sql=' COMMENT ON COLUMN "'+schemaName+'"."'+tableName+'"."'+oldName+'" IS \''+(comment==null?'':comment)+'\'; ';
         if (oldName!=newName){
             sql+=' ALTER TABLE "'+schemaName+'"."'+tableName+'" RENAME COLUMN "'+oldName+'" TO "'+newName+'";'
         }
         return this.query(sql);
-    }
+    },
     dropConstraint(schemaName:string, tableName:string, keyName:string){
         let sql='ALTER TABLE "'+schemaName+'"."'+tableName+'" DROP CONSTRAINT "'+keyName+'";';
         return this.query(sql);

@@ -11,7 +11,7 @@ import {TableInfoPanelModel} from "../panel-components/table-info.components";
    <input type=button value='new schema' (click)='newSchemaModal(0)'/>
     <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open" [class.arrow]="schema.tables.length!==0">
       <div class="schema-name" (click)="open(schema)" >{{schema.name}} <span class='edit-schema' (click)='newSchemaModal(schema.id);$event.stopPropagation()'><i class='fa fa-edit'></i></span></div>
-      <div style="overflow:hidden" class="tables" [style.height.px]="!schema.open ? 0 : schema.tables.length * 22">
+      <div style="overflow:hidden" class="tables" [style.height.px]="!schema.open ? 0 : schema.tables.length * 19">
           <div class="table" *ngFor="let table of schema.tables">
             <div class="table-name" (click)="openTable(schema,table)">
                 <i class="table-type fa" [class.fa-table]="table.type=='BASE TABLE'" [class.fa-eye]="table.type=='VIEW'"></i>
@@ -76,10 +76,10 @@ export class NavComponent {
     openTableInfo(schema,table) {
         PanelsService.add( new TableInfoPanelModel(schema.name,table.name));
     }
-  
-  constructor(private _pg: PgService){
+    _pg = PgService
+  constructor(){
 
-    _pg.listTables(this.dbName)
+    this._pg.listTables(this.dbName)
         .subscribe((res) => {
           var tmp = {}, result = [];
           if (res.rows) {

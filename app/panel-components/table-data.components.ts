@@ -39,8 +39,7 @@ export class TableDataPanelComponent{
     fit = 0
     limit = 1000
 
-    constructor(private pg:PgService){
-    }
+    pg = PgService
 
     ngOnInit(){
         this.refresh();
