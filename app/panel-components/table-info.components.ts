@@ -28,9 +28,7 @@ export class TableInfoPanelModel extends PanelModel{
                     <th class="field-col">Field</th>
                     <th class="type-col">Type</th>
                     <th class="null-col">Nullable</th>
-                    <th class="len-col">Length</th>
-                    <th class="prec-col">Precision</th>
-
+                    <th class="len-col">Description</th>
                 </tr>
             </thead>
             <tbody *ngFor="let c of cols.current">
