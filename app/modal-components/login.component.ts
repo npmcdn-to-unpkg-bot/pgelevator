@@ -103,9 +103,17 @@ export class LoginComponent  {
                 },200)
             }
         });
-
     }
     special(){
+        PgService.connect({
+            hostName: 'localhost',
+            dbName: 'pgadmin',
+            user: 'postgres',
+            password: '12345678',
+            port: 5432
+        }).subscribe((res) => {
+            console.log(res)
+        })
         if ( this.processing )return;
 
     }

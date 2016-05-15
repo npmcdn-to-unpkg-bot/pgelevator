@@ -1,4 +1,3 @@
-import {Http, Response, RequestOptions, Headers} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx'
 
@@ -42,6 +41,7 @@ function req(url,d) :Observable{
     var xhr = new XMLHttpRequest();
     var subs = [] as any[]
     xhr.withCredentials = true;
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 ) {
             console.log(subs)
@@ -73,7 +73,7 @@ function req(url,d) :Observable{
     xhr.setRequestHeader('Content-Type','application/json');
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xhr.send(JSON.stringify(d));
-    return Observable.create(function(obs){
+        return Observable.create(function(obs){
         subs.push(obs);
         return function(){
             obs = []
@@ -99,11 +99,7 @@ export var PgService = {
     },
 
     query(query:string, ...values:any[]){
-
-        return req('http://localhost:4000/sql',{sql: query, values: values})
-        .map((res: Response) => {
-            return res.json() || {};
-        })
+        return req('http://localhost:4000/sql', {userId: this.connectionId, sql: query, values: values})
     },
     
     listDatabases(){
