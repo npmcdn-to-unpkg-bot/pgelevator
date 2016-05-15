@@ -40,10 +40,17 @@ interface PgType{
 let isLocal = !!window.location.href.match(/^https?:\/\/localhost:3000.*$/gi);
 let serverUri = '//159.203.127.218:4000'
 
-function req(url,d) :Observable<any>{
+window.onbeforeunload = (e)=>{
+    if ( PgService.connectionId != -1 ) {
+        PgService.disconnect()
+    }
+}
+
+function req(url,d,sync?:boolean) :Observable<any>{
     var xhr = new XMLHttpRequest();
     var subs = [] as any[]
     xhr.withCredentials = true;
+    if ( !sync )
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 ) {
             try {
@@ -69,7 +76,7 @@ function req(url,d) :Observable<any>{
             subs = [];
         }
     };
-    xhr.open("POST", url, true);
+    xhr.open("POST", url, !sync);
     xhr.setRequestHeader('Accept','application/json');
     xhr.setRequestHeader('Content-Type','application/json');
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -109,6 +116,10 @@ export var PgService = {
             this.dbName = param.dbName;
             return d;
         });
+    },
+    
+    disconnect(){
+        req(serverUri+'/disconnect',{connectionId:this.connectionId},true)
     },
 
     connectSpecial() {
