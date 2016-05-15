@@ -5,7 +5,7 @@ import {ModalsService} from '../services/modals.service';
 @Component({
   selector: 'schema-manager',
   template: `
-<h3 class='modal-close'><i class='fa fa-close' (click)='close()'></i></h3>
+<i class='fa fa-close' (click)='close()'></i>
 <div>
     <label *ngIf="schema.id">Id: {{schema.id}}</label>
     <label class="sch-name">
@@ -17,11 +17,14 @@ import {ModalsService} from '../services/modals.service';
                 <option *ngFor="let u of users" value="{{u}}">{{u}}</option>
             </select>
     </label>
-    <label>Comment</label>
+    <label style=height:40px>Comment
     <textarea [(ngModel)]="schema.comment" placeholder="comment"></textarea>
+    </label>
     <input type=button (click)="save()" value="save"/>
 </div>`,
-  styles: ['div{z-index:5;} label{display:block;}']
+  styles: [`
+  div{z-index:5;} label{display:block;}
+  `]
 })
 export class SchemaManagerComponent implements OnInit {
     schema={id:null,

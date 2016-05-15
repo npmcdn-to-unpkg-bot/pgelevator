@@ -30,3 +30,10 @@ table-info table th { border-color: rgba(0,0,0,.08) !important; font-weight: nor
 table-info td { border-color: #ddd}
 table-info tr:nth-child(2n) { background: #eee }
 table-info th { padding-left: 10px; padding-right: 10px;}
+
+schema-manager i { position: absolute; right: 10px; top: 10px; font-size: 23px !important; }
+schema-manager div{ width: 400px; padding: 20px;}
+schema-manager label{ margin-top: 10px; position: relative; margin-top: 20px; }
+schema-manager textarea , schema-manager label input, schema-manager select{ position: absolute; left: 150px; top: 0;
+    padding: 4px}
+schema-manager input[type=button] { padding: 10px 20px}

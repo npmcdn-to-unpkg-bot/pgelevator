@@ -27,7 +27,8 @@ import {QueryPanelComponent, QueryPanelModel} from "../panel-components/query-pa
     .tab { position: relative;}
     .close-tab { position: absolute; right: 6px; top: 2px }
     .tab-title { float: left; padding: 6px; border-left: 1px solid #bbb; padding-right: 20px }
-    .tab.active .tab-title{ background: white; color: #000; box-shadow: 0 0px 2px rgba(0,0,0,.7); border-left-color: white; }
+    .tab.active .tab-title{ background: white; color: #000; box-shadow: 0 0px 2px rgba(0,0,0,.7); 
+        border-left-color: white; }
   `]
 })
 export class TabsComponent {
