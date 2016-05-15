@@ -17,7 +17,7 @@ export class GridComponent{
     @Input() result
     @Input() fitLayout=0
     
-    ROW_HEIGHT = 21
+    ROW_HEIGHT = 22
     el:HTMLElement
     headerTable:HTMLElement
     div:HTMLElement
