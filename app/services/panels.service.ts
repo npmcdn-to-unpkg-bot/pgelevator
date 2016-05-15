@@ -15,7 +15,6 @@ export var PanelsService = {
         if ( PanelsService.active )
             PanelsService.active.active = false;
         PanelsService.models = [tab].concat(PanelsService.models)
-
         PanelsService.active = tab;
         tab.active = true;
     },
@@ -26,5 +25,14 @@ export var PanelsService = {
         if ( PanelsService.active )
             PanelsService.active.active = false;
         PanelsService.active = tab;
+    },
+
+    close(tab:PanelModel){
+        this.models = this.models.filter((t)=>t!=tab)
+        if ( this.active == tab ) {
+            tab.active = false;
+            this.active = this.models[0] || null;
+            this.active.active = true;
+        }
     }
 }

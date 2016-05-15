@@ -1,10 +1,10 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, Input } from '@angular/core';
 
 @Component({
     selector: 'grid',
     template: '',
     styles: [`
-        :host-context{position:absolute;left:0;top:0;bottom:0;right:0;  }
+        :host-context{position:absolute;left:0;top:0;bottom:0;right:0; overflow:hidden }
         :host-context table {  border-collapse:collapse; }
         :host-context table.content-table { width:100%; }
         :host-context table.content-table thead { visibility: hidden; }
@@ -17,36 +17,59 @@ import { Component, ElementRef } from '@angular/core';
     `]
 })
 export class GridComponent{
+
+    @Input() result
     
     ROW_HEIGHT = 21
     el:HTMLElement
-    result
     headerTable:HTMLElement
     div:HTMLElement
     innerDiv:HTMLElement
     start:number
     end:number
     resize = ()=>{
-        this.fixSize()
+        this.fit()
     }
     timeout
     scroll = () => {
+        if ( this.div ) {
+            var header = this.el.querySelector('.grid-header') as HTMLElement;
+            if ( header)
+                header.style.marginLeft = '-' + this.div.scrollLeft + 'px'
+        }
         clearTimeout(this.timeout)
         this.timeout = setTimeout(()=>{
             this.calculatePart();
             this.innerDiv.innerHTML = this.html()
             this.putInPosition()
-            this.fixSize()
-        },500)
+            this.fit()
+        },250)
     }
     
-    constructor(el:ElementRef){
+    constructor(el:ElementRef) {
         this.el = el.nativeElement as HTMLElement;
+    }
+    ngOnInit(){
+        this.buildResult()
+    }
+    ngOnChanges(changes) {
+        this.buildResult()
+    }
+    ngAfterViewInit(){
+        this.fit()
+    }
+    buildResult(){
+        window.removeEventListener('resize',this.resize)
+        this.div && this.div.removeEventListener('scroll',this.scroll)
+        if ( !this.result ) {
+            this.el.innerHTML = ''
+            if (this.headerTable) this.headerTable.innerHTML = ''
+            return
+        }
         this.el.innerHTML = '<div><div style=overflow:hidden></div></div><table class=grid-header></table>'
         this.headerTable = this.el.querySelector('.grid-header') as HTMLElement
         this.div = this.el.querySelector('div') as HTMLElement
         this.innerDiv = this.el.querySelector('div>div') as HTMLElement;
-        this.result = this.createFakeResult();
         this.calculatePart();
         this.innerDiv.innerHTML = this.html();
         this.putInPosition();
@@ -54,6 +77,7 @@ export class GridComponent{
         window.addEventListener('resize',this.resize);
         this.div.addEventListener('scroll',this.scroll)
         this.innerDiv.style.height = Math.round(this.ROW_HEIGHT*(this.result.rows.length-1)+1).toLocaleString().replace(/\./g,'') + 'px'
+        this.fit()
     }
     
     putInPosition(){
@@ -76,25 +100,9 @@ export class GridComponent{
         this.end = Math.round(end);
     }
     
-    createFakeResult(){
-        var d = []
-        for ( var c=0; c< 10000; c++ ) {
-            d.push(['asjdhf',c,"asdklfjhaklsdfhkljashdf",'564',null,false,'asdfasdf',true,new Date]);
-        }
-        return {
-            rows: d,
-            cols: [{name:'A'},{name:'B'},{name:'C'},{name:'A'},{name:'A...'},{name:'A...'},{name:'A...'},
-                {name:'...asdf'},{name:'Asdf kjahsdf ha.'}]
-        };
-    }
-    
     ngOnDestroy(){
         window.removeEventListener('resize',this.resize)
         this.div.removeEventListener('scroll',this.scroll)
-    }
-    
-    ngOnInit(){
-        this.fixSize(); 
     }
     
     cloneHeader(){
@@ -103,7 +111,8 @@ export class GridComponent{
         this.headerTable.appendChild(thead);
     }
     
-    fixSize(){
+    fit(){
+        if ( !this.result )return;
         var header = this.el.querySelector('.grid-header') as HTMLElement;
         var contentTable = this.el.querySelector('.content-table') as HTMLElement;
         var hiddenHeader = this.el.querySelector('.content-table thead') as HTMLElement;
@@ -115,11 +124,12 @@ export class GridComponent{
                 (hiddenThs[c] as HTMLElement).offsetWidth+'px'; 
         }
         header.style.width = contentTable.offsetWidth+'px'
+        this.innerDiv.style.width = contentTable.offsetWidth+'px'
     }
     
     html(){
         var h = ['<table class=content-table><thead><tr>'];
-        this.result.cols.forEach((c)=>{
+        this.result.fields.forEach((c)=>{
             h.push('<th>')
             h.push( c.name )
             h.push('</th>')

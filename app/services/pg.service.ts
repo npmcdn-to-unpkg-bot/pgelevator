@@ -43,8 +43,8 @@ interface PgType{
 export class PgService{
     
     types:{[_:string]:PgType}
-    
-    constructor(private http:Http){
+
+    constructor(public http:Http){
         this.getTypes()
     }
     

@@ -2,7 +2,6 @@ body { font-family: sans-serif; cursor: default }
 * {box-sizing: border-box }
 
 nav { background: #ddd }
-tabs { background: #ddd }
 .schema-name:hover, .table:hover { background: #bbb }
 
-.tab.active { background: #555; color: white }
+tabs { background: #ddd; }

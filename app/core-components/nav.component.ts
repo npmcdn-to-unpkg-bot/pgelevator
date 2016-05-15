@@ -3,6 +3,7 @@ import {PgService} from "../services/pg.service";
 import {ModalsService} from '../services/modals.service';
 import {TableDataPanelModel} from "../panel-components/table-data.components";
 import {PanelsService} from "../services/panels.service";
+import {TableInfoPanelModel} from "../panel-components/table-info.components";
 
 @Component({
   selector: 'nav',
@@ -11,18 +12,21 @@ import {PanelsService} from "../services/panels.service";
     <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open" [class.arrow]="schema.tables.length!==0">
       <div class="schema-name" (click)="open(schema)" >{{schema.name}} <span class='edit-schema' (click)='newSchemaModal(schema.id);$event.stopPropagation()'><i class='fa fa-edit'></i></span></div>
       <div style="overflow:hidden" class="tables" [style.height.px]="!schema.open ? 0 : schema.tables.length * 22">
-          <div class="table" *ngFor="let table of schema.tables" (click)="openTable(table)">
-            <i class="table-type fa" [class.fa-table]="table.type=='BASE TABLE'" [class.fa-eye]="table.type=='VIEW'"></i>
-            {{table.name}} <sup>{{table.type}}</sup>
-            <i class='table-info fa fa-info-circle' *ngIf="table.type=='BASE TABLE'"></i>
+          <div class="table" *ngFor="let table of schema.tables">
+            <div class="table-name" (click)="openTable(schema,table)">
+                <i class="table-type fa" [class.fa-table]="table.type=='BASE TABLE'" [class.fa-eye]="table.type=='VIEW'"></i>
+                {{table.name}} <sup>{{table.type}}</sup></div>
+            <span class="table-info" *ngIf="table.type=='BASE TABLE'" (click)="openTableInfo(schema,table)">
+                <i class='fa fa-info-circle'></i>
+            </span>
           </div>
       </div>
     </div>
   `,
   styles: [`
     .schema { position: relative;}
-    .schema-name, .table {
-        padding: 2px 0 2px 20px; 
+    .schema-name, .table-name {
+        padding: 2px 20px 2px 20px; 
     }
     .arrow:after{
         content: ''; border-top: 6px solid transparent; border-bottom: 6px solid transparent;
@@ -37,9 +41,17 @@ import {PanelsService} from "../services/panels.service";
         display: block;
     }
     .schema sup { font-size: 8px }
-    .table, .schema-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .table, .schema-name { position: relative; }
+    .table-name, .schema-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis;  }
     .table-type{display:inline-block;font-size:11px;margin-right:5px;}
-    .edit-schema, .table-info{font-size:12px; display:inline-block;margin-left:5px;}
+    
+    .edit-schema, .table-info{font-size:12px; right: 5px; position:absolute; top: 3px;
+        color: #888; display: none }
+    .edit-schema:hover, .table-info:hover { color: #000 }
+    .schema-name, .table-name {padding-right: 0 }
+    .schema-name:hover, .table:hover .table-name { padding-right: 20px }
+    .schema-name:hover .edit-schema, .table:hover .table-info { display: block }
+    
   `]
 })
 export class NavComponent {
@@ -57,8 +69,12 @@ export class NavComponent {
         }
     }
 
-    openTable(table) {
-        PanelsService.add( new TableDataPanelModel(table.schema,table.name));
+    openTable(schema,table) {
+        PanelsService.add( new TableDataPanelModel(schema.name,table.name));
+    }
+
+    openTableInfo(schema,table) {
+        PanelsService.add( new TableInfoPanelModel(schema.name,table.name));
     }
   
   constructor(private _pg: PgService){
