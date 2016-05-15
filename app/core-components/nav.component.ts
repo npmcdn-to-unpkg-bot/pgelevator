@@ -128,6 +128,10 @@ export class NavComponent {
                 
             }
           }
+          if ( this.schemas && this.schemas.length ) {
+              var p = this.schemas.find((s)=>s.name == 'public' )
+              this.open(p)
+          }
         })
   }
   newSchemaModal(schemaId:number){
