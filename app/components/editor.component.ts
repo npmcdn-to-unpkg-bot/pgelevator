@@ -6,7 +6,7 @@ import { Component, ElementRef, Input, Output, EventEmitter } from '@angular/cor
 })
 export class EditorComponent {
     
-    @Output() code:EventEmitter = new EventEmitter()
+    @Output() code:EventEmitter<any> = new EventEmitter()
     codeMirror: CodeMirror;
     constructor(private el:ElementRef){ }
 
