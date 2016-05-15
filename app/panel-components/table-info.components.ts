@@ -97,6 +97,11 @@ export class TableInfoPanelModel extends PanelModel{
         .field-table input{width:100%; background:none; border:none; border-bottom:1px solid transparent;}
         .field-table input.editable{border-bottom:1px solid blue;}
         .field-table .action-icons{text-align:center;}
+        :host-context { position: absolute; top: 0; bottom: 0; left: 0; right: 0; overflow: scroll; padding: 20px; }
+        h1 { margin: 0; text-align: center; }
+       h2 { margin-bottom: 0; font-weight: 200; color: #d07; }
+       td { padding: 2px 10px; }
+       table { width: 100%; }
     `],
     directives: [],
     selector: 'table-info'
