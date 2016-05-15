@@ -3,11 +3,11 @@ import { Component, OnInit, Input } from '@angular/core';
 @Component({
     selector: 'login',
     template: `<div style="width:370px" [class.shake]="shake">
-        <div class="field" [class.error]="hostError"><label>Host: </label><input [(ngModel)]="host"></div>
-        <div class="field" [class.error]="portError"><label>Port: </label><input [(ngModel)]="port" type="number"></div>
-        <div class="field" [class.error]="baseError"><label>Base: </label><input [(ngModel)]="base"></div>
-        <div class="field" [class.error]="usernameError"><label>Username: </label><input [(ngModel)]="username"></div>
-        <div class="field" [class.error]="passwordError"><label>Password: </label><input [(ngModel)]="password" type="password"></div>
+        <div class="field" [class.error]="hostError"><label for=host>Host: </label><input id="host" [(ngModel)]="host"></div>
+        <div class="field" [class.error]="portError"><label for=port>Port: </label><input id=port [(ngModel)]="port" type="number"></div>
+        <div class="field" [class.error]="baseError"><label for=base>Base: </label><input id=base [(ngModel)]="base"></div>
+        <div class="field" [class.error]="usernameError"><label for=username>Username: </label><input id=username [(ngModel)]="username"></div>
+        <div class="field" [class.error]="passwordError"><label for=password>Password: </label><input id=password [(ngModel)]="password" type="password"></div>
         <div class="actions">
             <button (click)="connect()">Connect</button>
         </div>
