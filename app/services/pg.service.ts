@@ -38,7 +38,7 @@ interface PgType{
     name:string
 }
 
-function req(url,d){
+function req(url,d) :Observable{
     var xhr = new XMLHttpRequest();
     var subs = [] as any[]
     xhr.setRequestHeader('Accept','application/json');
@@ -78,20 +78,14 @@ function req(url,d){
 
 export var PgService = {
     
-    types: null as {[_:string]:PgType}, //
+    types: null as {[_:string]:PgType},
 
     query(query:string, ...values:any[]){
 
-        let options = new RequestOptions({ headers: new Headers({'Content-Type': 'application/json'}) });
-
-        return this.http
-            .post('http://localhost:4000/sql',
-                JSON.stringify({sql: query, values: values}),
-                options
-            )
-            .map((res: Response) => {
-                return res.json() || {};
-            })
+        return req('http://localhost:4000/sql',{sql: query, values: values})
+        .map((res: Response) => {
+            return res.json() || {};
+        })
     },
     
     listDatabases(){

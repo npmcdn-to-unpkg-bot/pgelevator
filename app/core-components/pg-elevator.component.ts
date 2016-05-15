@@ -12,7 +12,7 @@ import Timer = NodeJS.Timer;
 @Component({
   selector: 'pg-elevator',
   directives: [NavComponent,TabContentComponent,TabsComponent,EditorComponent, ModalFrameComponent],
-  providers: [HTTP_PROVIDERS, PgService],
+  providers: [HTTP_PROVIDERS],
   template: `
     <div *ngIf="!ModalsService.login">
      <nav [style.width.px]=left style="position: absolute; left: 0; top: 0; bottom: 0;overflow:auto "></nav>
