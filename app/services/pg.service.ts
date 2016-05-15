@@ -135,7 +135,7 @@ export var PgService = {
     },
 
     query(query:string, ...values:any[]){
-        return req('//159.203.127.218:4000/sql', {userId: this.connectionId, sql: query, values: values})
+        return req(serverUri+'/sql', {userId: this.connectionId, sql: query, values: values})
     },
     
     listDatabases(){
