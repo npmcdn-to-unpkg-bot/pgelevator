@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import {PgService} from "../services/pg.service";
 import {ModalsService} from '../services/modals.service';
+import {TableDataPanelModel} from "../panel-components/table-data.components";
+import {PanelsService} from "../services/panels.service";
 
 @Component({
   selector: 'nav',
@@ -9,7 +11,7 @@ import {ModalsService} from '../services/modals.service';
     <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open" [class.arrow]="schema.tables.length!==0">
       <div class="schema-name" (click)="open(schema)" >{{schema.name}} <span class='edit-schema' (click)='newSchemaModal(schema.id)'>E</span></div>
       <div style="overflow:hidden" class="tables" [style.height.px]="!schema.open ? 0 : schema.tables.length * 22">
-          <div class="table" *ngFor="let table of schema.tables">
+          <div class="table" *ngFor="let table of schema.tables" (click)="openTable(table)">
             {{table.name}} <sup>{{table.type}}</sup>
           </div>
       </div>
@@ -49,6 +51,10 @@ export class NavComponent {
             if (active) active.open = false
             this.schemas[this.schemas.indexOf(schema)].open = true
         }
+    }
+
+    openTable(table) {
+        PanelsService.add( new TableDataPanelModel(table.schema,table.name));
     }
   
   constructor(private _pg: PgService){

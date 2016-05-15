@@ -9,9 +9,13 @@ import {QueryPanelComponent, QueryPanelModel} from "../panel-components/query-pa
       (click)=activate(tab)>
       {{tab.title}}
     </span>
-    <button (click)=novaConsulta()>Nova Consulta</button>
+    <span class="add" (click)=novaConsulta()><i class="fa fa-plus"></i></span>
   `,
-  styles: [':host-context{overflow:hidden;}']
+  styles: [`
+    :host-context{overflow:hidden;} 
+    .add{position:absolute;right:0;font-size:22px;padding:4px;opacity:.5;cursor:pointer}
+    .add:hover { opacity: 1 }
+  `]
 })
 export class TabsComponent {
   PanelsService = PanelsService;
