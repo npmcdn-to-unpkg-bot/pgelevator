@@ -386,7 +386,7 @@ export var PgService = {
     },
     addField(schemaName:string, tableName:string, f:newField){
         let sql='ALTER TABLE "'+schemaName+'"."'+tableName+'" ADD COLUMN "'+f.name+'" '+f.dataType+';';
-        if (f.nullable) sql+='ALTER TABLE "'+schemaName+'"."'+tableName+'" ALTER COLUMN "'+f.name+'" SET NOT NULL;'
+        if (!f.nullable) sql+='ALTER TABLE "'+schemaName+'"."'+tableName+'" ALTER COLUMN "'+f.name+'" SET NOT NULL;'
         sql+=' COMMENT ON COLUMN "'+schemaName+'"."'+tableName+'"."'+f.name+'" IS \''+(f.comment==null?'':f.comment)+'\'; ';
         return this.query(sql);
     }

@@ -23,7 +23,6 @@ export class TableInfoPanelModel extends PanelModel{
         <table class="field-table">
             <thead>
                 <tr>
-<<<<<<< HEAD
                     <th class="act-col">::</th>
                     <th class="key-col">key</th>
                     <th class="field-col">Field</th>
@@ -31,14 +30,7 @@ export class TableInfoPanelModel extends PanelModel{
                     <th class="null-col">Nullable</th>
                     <th class="len-col">Length</th>
                     <th class="prec-col">Precision</th>
-=======
-                    <td class="act-col">::</td>
-                    <td class="key-col">key</td>
-                    <td class="field-col">Field</td>
-                    <td class="type-col">Type</td>
-                    <td class="null-col">Nullable</td>
-                    <td class="desc-col">Description</td>
->>>>>>> d13404f2dfcbae6af896ed544fb687425ab8d104
+
                 </tr>
             </thead>
             <tbody *ngFor="let c of cols.current">
@@ -170,7 +162,6 @@ export class TableInfoPanelComponent implements OnInit{
         });
     }
     editField(field){
-        console.log(this.cols);
         field[16]=true;
     }
     deleteField(field){
@@ -196,7 +187,6 @@ export class TableInfoPanelComponent implements OnInit{
     }
     saveField(field){
         let fo=[];
-        console.log(this.cols);
         if (confirm("Confirm the changes on column "+field[1]+"?")){
             this.cols.original.forEach((f)=>{
                 if(f[0]===field[0]){fo=f;}
