@@ -3,7 +3,6 @@ import {NavComponent} from './nav.component';
 import {TabContentComponent} from './tab-content.component';
 import {TabsComponent} from './tabs.component';
 import {EditorComponent} from '../components/editor.component';
-import { HTTP_PROVIDERS }    from '@angular/http';
 import {PgService} from "../services/pg.service";
 import {ModalFrameComponent} from './modal-frame.component';
 import {ModalsService} from '../services/modals.service'
@@ -12,7 +11,6 @@ import Timer = NodeJS.Timer;
 @Component({
   selector: 'pg-elevator',
   directives: [NavComponent,TabContentComponent,TabsComponent,EditorComponent, ModalFrameComponent],
-  providers: [HTTP_PROVIDERS],
   template: `
     <div *ngIf="!ModalsService.login">
      <nav [style.width.px]=left style="position: absolute; left: 0; top: 0; bottom: 0;overflow:auto "></nav>
@@ -50,7 +48,6 @@ export class PgElevatorComponent {
       window.removeEventListener("mousemove",this.mousemove);
       window.removeEventListener("mouseleave",this.mouseleave);
     };
-    
   }
   
   enter(){

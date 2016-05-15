@@ -5,6 +5,7 @@ import {ModalsService} from "../services/modals.service";
 @Component({
     selector: 'login',
     template: `
+    <span *ngIf="processing" class=conneting>Conneting...</span>
     <div style="width:370px" [class.shake]="shake" [style.opacity]="processing?0.5:1">
         <div class="field" [class.error]="hostError">
             <label for=host>Host: </label>
@@ -35,12 +36,14 @@ import {ModalsService} from "../services/modals.service";
         </div>
 </div>`,
     styles: [`
+    .conneting { position: absolute; top: 10px; left: 10px; font-weight: bold; font-size: 27px; 
+        background: rgba(255,255,255,.6); z-index: 1; }
     .field { margin: 10px; margin-left: 20px}
     input { padding: 5px }
     label { float: left; width: 129px; padding-top: 6px; }
     button{ padding: 10px; }
     .actions { margin: 10x; text-align: center; }
-    .special { padding: 10px; text-align:right; text-decoration: underline; }
+    .special { padding: 10px; text-align:right; text-decoration: underline; font-size: 13px }
     .special span { cursor: pointer; color: #333 }
     .special span:hover { color: #000 }
     .error { color: #d00 }
@@ -99,6 +102,8 @@ export class LoginComponent  {
                 ModalsService.login = null;
             } else {
                 this.containError = true
+                this.shake = true
+                setTimeout(()=>{this.shake=false},400)
                 setTimeout(()=>{
                     this.containError = false
                 },8000)
@@ -106,6 +111,8 @@ export class LoginComponent  {
         },()=>{
             this.processing=false
             this.containError = true
+            this.shake = true
+            setTimeout(()=>{this.shake=false},400)
             setTimeout(()=>{
                 this.containError = false
             },8000)
