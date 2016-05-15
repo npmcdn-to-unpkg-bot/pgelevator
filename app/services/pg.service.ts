@@ -98,7 +98,7 @@ export var PgService = {
 
     connect(param:{port:number; dbName:string; hostName:string; password:string; user:string}) {
         if ( this.connectionId != -1 )throw 'e!'
-        return req('http://159.203.127.218:4000/connect',param).map((d)=>{
+        return req('//159.203.127.218:4000/connect',param).map((d)=>{
             if ( d.connection ) {
                 if ( this.connectionId != -1 && this.connectionId != d.connection )throw 'e!'
                 PgService.connectionId = d.connection;
@@ -110,7 +110,7 @@ export var PgService = {
 
     connectSpecial() {
         if ( this.connectionId != -1 )throw 'e!'
-        return req('http://159.203.127.218:4000/connect-special',{}).map((d)=>{
+        return req('//159.203.127.218:4000/connect-special',{}).map((d)=>{
             if ( d.connection ) {
                 if ( this.connectionId != -1 && this.connectionId != d.connection )throw 'e!'
                 PgService.connectionId = d.connection;

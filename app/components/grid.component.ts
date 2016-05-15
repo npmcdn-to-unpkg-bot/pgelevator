@@ -122,7 +122,7 @@ export class GridComponent{
     
     ngOnDestroy(){
         window.removeEventListener('resize',this.resize)
-        this.div.removeEventListener('scroll',this.scroll)
+        this.div && this.div.removeEventListener('scroll',this.scroll)
     }
     
     cloneHeader(){
