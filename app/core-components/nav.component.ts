@@ -8,7 +8,8 @@ import {TableInfoPanelModel} from "../panel-components/table-info.components";
 @Component({
   selector: 'nav',
   template: `
-   <input type=button value='new schema' (click)='newSchemaModal(0)'/>
+   <span (click)='newSchemaModal(0)' class="new-schema" title="New schema"><i class="fa fa-plus"></i></span>
+    <div style="position:absolute;top:0;bottom:0;left:0;right:8px;overflow:auto">
     <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open" [class.arrow]="schema.tables.length!==0">
       <div class="schema-name" (click)="open(schema)" >{{schema.name}} <span class='edit-schema' (click)='newSchemaModal(schema.id);$event.stopPropagation()'><i class='fa fa-edit'></i></span></div>
       <div style="overflow:hidden" class="tables" [style.height.px]="!schema.open ? 0 : schema.tables.length * 19">
@@ -22,12 +23,14 @@ import {TableInfoPanelModel} from "../panel-components/table-info.components";
           </div>
       </div>
     </div>
+    </div>
   `,
   styles: [`
     .schema { position: relative;}
     .schema-name, .table-name {
         padding: 2px 20px 2px 20px; 
     }
+    .new-schema { position: absolute; bottom: 0; right: 2px; font-size: 22px; padding: 4px; opacity: .5; z-index: 2 }
     .arrow:after{
         content: ''; border-top: 6px solid transparent; border-bottom: 6px solid transparent;
         border-left: 6px solid #444;

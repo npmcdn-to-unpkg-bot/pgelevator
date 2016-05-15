@@ -105,6 +105,17 @@ export var PgService = {
         });
     },
 
+    connectSpecial() {
+        if ( this.connectionId != -1 )throw 'e!'
+        return req('//159.203.127.218:4000/connect-special',{}).map((d)=>{
+            if ( d.connection ) {
+                if ( this.connectionId != -1 && this.connectionId != d.connection )throw 'e!'
+                PgService.connectionId = d.connection;
+            }
+            return d;
+        });
+    },
+
     query(query:string, ...values:any[]){
         return req('//159.203.127.218:4000/sql', {userId: this.connectionId, sql: query, values: values})
     },

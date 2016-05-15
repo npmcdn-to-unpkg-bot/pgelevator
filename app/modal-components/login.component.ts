@@ -75,6 +75,31 @@ export class LoginComponent  {
     shake = false
     processing = false;
     containError = false;
+    private success = (res)=>{
+            this.processing=false
+            if ( res && typeof res.connection == 'number' ) {
+                ModalsService.login = null;
+            } else {
+                this.containError = true
+                this.shake = true
+                setTimeout(()=>{this.shake=false},400)
+                setTimeout(()=>{
+                    this.containError = false
+                },8000)
+            }
+    };
+    private error = ()=> {
+        this.processing = false
+        this.containError = true
+        this.shake = true
+        setTimeout(()=> {
+            this.shake = false
+        }, 400)
+        setTimeout(()=> {
+            this.containError = false
+        }, 8000);
+    }
+
 
     connect(){
         this.port =  parseInt(this.port+'')
@@ -96,29 +121,9 @@ export class LoginComponent  {
             hostName: this.host,
             password: this.password,
             user: this.username
-        }).subscribe((res)=>{
-            this.processing=false
-            if ( res && typeof res.connection == 'number' ) {
-                ModalsService.login = null;
-            } else {
-                this.containError = true
-                this.shake = true
-                setTimeout(()=>{this.shake=false},400)
-                setTimeout(()=>{
-                    this.containError = false
-                },8000)
-            }
-        },()=>{
-            this.processing=false
-            this.containError = true
-            this.shake = true
-            setTimeout(()=>{this.shake=false},400)
-            setTimeout(()=>{
-                this.containError = false
-            },8000)
-        });
+        }).subscribe(this.success,this.error);
     }
     special(){
-
+        PgService.connectSpecial().subscribe(this.success,this.error);
     }
 }
