@@ -38,7 +38,7 @@ interface PgType{
 }
 
 let isLocal = !!window.location.href.match(/^https?:\/\/localhost:3000.*$/gi);
-let serverUri = '//159.203.127.218'
+let serverUri = '//159.203.127.218:4000'
 
 function req(url,d) :Observable<any>{
     var xhr = new XMLHttpRequest();
