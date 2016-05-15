@@ -160,10 +160,25 @@ export class GridComponent{
         for ( var c=this.start; c <= this.end && c < this.result.rows.length; c++ ) {
             var row = this.result.rows[c];
             h.push('<tr>')
+            var c2=0;
             row.forEach((cell)=>{
-               h.push('<td>')
-               h.push( cell )
-               h.push('</td>') 
+                var col = this.result.fields[c2]
+                h.push('<td><div class="')
+                if ( cell === null )
+                    h.push('null ')
+                if ( typeof cell == 'boolean' )
+                    h.push('boolean')
+                else if ( typeof cell == 'string' )
+                    h.push('string')
+                else if ( typeof cell == 'number' )
+                    h.push('number')
+                h.push('">');
+                if ( cell === null )
+                    h.push('null')
+                else
+                    h.push( cell )
+                h.push('</div></td>')
+                c2++
             });
             h.push('</tr>')
         }
