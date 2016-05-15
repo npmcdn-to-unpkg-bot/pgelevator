@@ -208,9 +208,7 @@ export var PgService = {
         return this.query(sql, schemaName)
     },
     listDataTypes(){
-        let sql=`SELECT n.nspname as "Schema",
-            pg_catalog.format_type(t.oid, NULL) AS "Name",
-            pg_catalog.obj_description(t.oid, 'pg_type') as "Description"
+        let sql=`SELECT DISTINCT pg_catalog.format_type(t.oid, NULL) types
             FROM pg_catalog.pg_type t
                 LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
             WHERE (t.typrelid = 0 OR (SELECT c.relkind = 'c' FROM pg_catalog.pg_class c WHERE c.oid = t.typrelid))
@@ -223,7 +221,7 @@ export var PgService = {
     listCols( schemaName:string, tableName:string){
         let sql=`SELECT ordinal_position, column_name, COLUMNS.data_type, COLUMNS.udt_name udt_type, 
             CASE WHEN COLUMNS.data_type='ARRAY' THEN e.data_type||'[]' WHEN (column_default ilike 'nextval(%' AND is_nullable='NO') THEN 'serial' ELSE COLUMNS.data_type END field_type,
-            column_default, is_nullable, COLUMNS.character_maximum_length,
+            column_default, CASE WHEN is_nullable='YES' THEN true else false end is_nullable, COLUMNS.character_maximum_length,
             COLUMNS.numeric_precision, COLUMNS.numeric_scale decimal_precision, c.constraint_type,
             CASE WHEN c.constraint_type='PRIMARY KEY' THEN 'PK' WHEN c.constraint_type='FOREIGN KEY' THEN 'FK' WHEN c.constraint_type='UNIQUE' THEN 'UN' ELSE null END contraint_display, 
             c.f_table , c.f_col, c.constraint_name,
