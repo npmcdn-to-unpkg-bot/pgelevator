@@ -40,13 +40,9 @@ interface PgType{
 }
 
 @Injectable()
-export class PgService{
+export var PgService = {
     
-    types:{[_:string]:PgType}
-
-    constructor(public http:Http){
-        // this.getTypes()
-    }
+    types: null as {[_:string]:PgType}, //
     
     query(query:string, ...values:any[]){
         let options = new RequestOptions({ headers: new Headers({'Content-Type': 'application/json'}) });
@@ -59,18 +55,18 @@ export class PgService{
             .map((res: Response) => {
                 return res.json() || {};
             })
-    }
+    },
     
     listDatabases(){
         let sql="SELECT DISTINCT catalog_name db_name FROM information_schema.schemata;";
         return this.query(sql);
-    }
+    },
     
     listSchemas(dbName:string){
         let sql="SELECT catalog_name db_name, schema_name FROM information_schema.schemata " +
             "WHERE catalog_name = $1 ;";
         return this.query(sql, dbName);
-    }
+    },
     getSchema(schemaId:number){
         
         let sql=`SELECT n.oid schema_id, n.nspname AS schema_name,                                          
@@ -80,7 +76,7 @@ export class PgService{
             WHERE n.oid = $1      
             ORDER BY 1;`;
         return this.query(sql, schemaId);
-    }
+    },
     
     listTables(dbName:string)   { // and views
         let sql=`SELECT s.catalog_name db, s.schema_name, t.table_name, t.table_type, t.is_insertable_into, t.is_typed, 
@@ -110,7 +106,7 @@ export class PgService{
                 ORDER BY s.schema_name, t.table_type,t.table_name
                 `;
         return this.query(sql, dbName)
-    }
+    },
     listTablesFromSchema(dbName:string, schemaName:string){ // and views
         let sql=`SELECT table_catalog db, table_schema schema_name,table_name,  
             table_type, is_insertable_into, is_typed,
@@ -130,17 +126,17 @@ export class PgService{
             GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
             ORDER BY table_schema,table_type,table_name;`;
         return this.query(sql, dbName, schemaName)
-    }
+    },
     listSequences(dbName:string, schemaName:string){
         let sql=`SELECT *, sequence_name, data_type, minimum_value, maximum_value, start_value FROM information_schema.sequences 
             WHERE sequence_catalog= $1 AND sequence_schema= $2 ;`
         return this.query(sql, dbName, schemaName)
-    }
+    },
     listFunctions(schemaName:string){
         let sql=`SELECT  p.proname FROM    pg_catalog.pg_namespace n
             JOIN pg_catalog.pg_proc p ON p.pronamespace = n.oid WHERE n.nspname = $1 `;
         return this.query(sql, schemaName)
-    }
+    },
     listDataTypes(){
         let sql=`SELECT n.nspname as "Schema",
             pg_catalog.format_type(t.oid, NULL) AS "Name",
@@ -152,7 +148,7 @@ export class PgService{
             AND pg_catalog.pg_type_is_visible(t.oid)
             ORDER BY 1, 2;`;
         return this.query(sql)
-    }
+    },
 
     listTableMetadata(schemaName:string, tableName:string){
         let sql =`
@@ -179,7 +175,7 @@ export class PgService{
             AND nsp.nspname = $1 AND pgc.relname = $2 
             ORDER BY a.attnum;`
         return this.query(sql, schemaName, tableName);
-    }
+    },
 
     getTypes(){
         let sql = `
@@ -214,7 +210,7 @@ export class PgService{
                 });
             }
         });
-    }
+    },
     listUsers(){
         let sql=`SELECT u.usename AS user_name,
             u.usesysid AS user_id, 
@@ -225,7 +221,7 @@ export class PgService{
             END AS user_attr
             FROM pg_catalog.pg_user u`;
             return this.query(sql);
-    }
+    },
     manageSchema(schema:Schema){
         let me=this;
         if (schema.id){ //alter

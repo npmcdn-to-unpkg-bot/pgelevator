@@ -17,7 +17,8 @@ export class EditorComponent {
             mode:  "text/x-sql"
         } );
         this.codeMirror.on('change',(v)=>{
-            this.code.emit(v.getValue())
+            this.code.emit(v.getValue()
+            )
         })
         this.code.emit('')
     }

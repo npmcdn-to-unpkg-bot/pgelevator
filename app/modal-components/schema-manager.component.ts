@@ -33,9 +33,7 @@ export class SchemaManagerComponent implements OnInit {
             };
     @Input() model;
     users:string[]=[];
-    constructor(
-        private pgService:PgService
-    ){}
+    pgService = PgService
     ngOnInit() {
         /**TODO
          * get current db properties to edit

@@ -34,8 +34,8 @@ export class PgElevatorComponent {
   mousemove:(e:MouseEvent)=>void
   mouseleave:()=>void
   ModalsService = ModalsService
-  
-  constructor(private pg: PgService){
+  pg = PgService
+  constructor(){
     this.mousemove = (e)=>{
       var l = this.lastLeft + e.clientX - this.clientX;
       if ( l < 50 )

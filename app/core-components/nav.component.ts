@@ -76,10 +76,10 @@ export class NavComponent {
     openTableInfo(schema,table) {
         PanelsService.add( new TableInfoPanelModel(schema.name,table.name));
     }
-  
-  constructor(private _pg: PgService){
+    _pg = PgService
+  constructor(){
 
-    _pg.listTables(this.dbName)
+    this._pg.listTables(this.dbName)
         .subscribe((res) => {
           var tmp = {}, result = [];
           if (res.rows) {
