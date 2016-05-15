@@ -157,10 +157,12 @@ export class TableInfoPanelComponent implements OnInit{
             alert("Please select the type of the new column!");
             return;
         }
-        this.pg.addField(this.model.schemaName, this.model.tableName, this.theNewField).subscribe((res)=>{
-            this.loadCols();
-            this.newone=false;
-        });
+        if (confirm("Confirm new column ?")){
+            this.pg.addField(this.model.schemaName, this.model.tableName, this.theNewField).subscribe((res)=>{
+                this.loadCols();
+                this.newone=false;
+            });    
+        }
     }
     editField(field){
         field[16]=true;
