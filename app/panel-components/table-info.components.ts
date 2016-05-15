@@ -101,8 +101,9 @@ export class TableInfoPanelComponent implements OnInit{
         current:[]
     };
     idx;
+
+    pg =PgService
     
-    constructor(private pg:PgService) {}
     ngOnInit(){
         this.loadCols();
         this.pg.listIndexes(this.model.schemaName, this.model.tableName).subscribe((res) => {

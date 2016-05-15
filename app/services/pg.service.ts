@@ -94,6 +94,8 @@ export var PgService = {
 
     connectionId:-1,
 
+    dbName:null,
+
     connect(param:{port:number; dbName:string; hostName:string; password:string; user:string}) {
         if ( this.connectionId != -1 )throw 'e!'
         return req('//159.203.127.218:4000/connect',param).map((d)=>{
@@ -101,6 +103,7 @@ export var PgService = {
                 if ( this.connectionId != -1 && this.connectionId != d.connection )throw 'e!'
                 PgService.connectionId = d.connection;
             }
+            this.dbName = dbName;
             return d;
         });
     },
@@ -112,6 +115,7 @@ export var PgService = {
                 if ( this.connectionId != -1 && this.connectionId != d.connection )throw 'e!'
                 PgService.connectionId = d.connection;
             }
+            this.dbName = 'pgadmin';
             return d;
         });
     },
@@ -141,7 +145,7 @@ export var PgService = {
         return this.query(sql, schemaId);
     },
     
-    listTables(dbName:string)   { // and views
+    listTables()   { // and views
         let sql=`SELECT s.catalog_name db, s.schema_name, t.table_name, t.table_type, t.is_insertable_into, t.is_typed, 
                 t.primary_key,
                 t.primary_key_type,
@@ -168,9 +172,9 @@ export var PgService = {
                 WHERE catalog_name = $1 and (n.nspname !~ '^pg_' OR n.nspname='pg_catalog') 
                 ORDER BY s.schema_name, t.table_type,t.table_name
                 `;
-        return this.query(sql, dbName)
+        return this.query(sql, this.dbName)
     },
-    listTablesFromSchema(dbName:string, schemaName:string){ // and views
+    listTablesFromSchema( schemaName:string){ // and views
         let sql=`SELECT table_catalog db, table_schema schema_name,table_name,  
             table_type, is_insertable_into, is_typed,
             array_agg(CASE WHEN cp.data_column IS NOT NULL THEN cp.data_column END) primary_key,
@@ -188,12 +192,12 @@ export var PgService = {
             AND table_type in ('BASE TABLE', 'VIEW')
             GROUP BY table_catalog , table_schema,table_name,  table_type, is_insertable_into, is_typed
             ORDER BY table_schema,table_type,table_name;`;
-        return this.query(sql, dbName, schemaName)
+        return this.query(sql, this.dbName, schemaName)
     },
-    listSequences(dbName:string, schemaName:string){
+    listSequences(schemaName:string){
         let sql=`SELECT *, sequence_name, data_type, minimum_value, maximum_value, start_value FROM information_schema.sequences 
             WHERE sequence_catalog= $1 AND sequence_schema= $2 ;`
-        return this.query(sql, dbName, schemaName)
+        return this.query(sql, this.dbName, schemaName)
     },
     listFunctions(schemaName:string){
         let sql=`SELECT  p.proname FROM    pg_catalog.pg_namespace n
@@ -213,7 +217,7 @@ export var PgService = {
         return this.query(sql)
 
     },
-    listCols(dbName:string, schemaName:string, tableName:string){
+    listCols( schemaName:string, tableName:string){
         let sql=`SELECT ordinal_position, column_name, COLUMNS.data_type, COLUMNS.udt_name udt_type, 
             CASE WHEN COLUMNS.data_type='ARRAY' THEN e.data_type||'[]' WHEN (column_default ilike 'nextval(%' AND is_nullable='NO') THEN 'serial' ELSE COLUMNS.data_type END field_type,
             column_default, is_nullable, COLUMNS.character_maximum_length,
@@ -246,7 +250,7 @@ export var PgService = {
                     WHERE tc.constraint_type in ('PRIMARY KEY', 'UNIQUE', 'FOREIGN KEY')
             ) as c ON c.dg=table_catalog AND c.sch=table_schema AND c.tb=table_name AND c.col_name=column_name
             WHERE table_catalog= $1 AND table_schema= $2 AND table_name = $3 ;`;
-            return this.query(sql, dbName, schemaName, tableName);
+            return this.query(sql, this.dbName, schemaName, tableName);
     },
     listIndexes(schemaName:string, tableName:string){
         let sql=`select indexrelid, i.indexname idxm, i.indexdef definition, pgd.description

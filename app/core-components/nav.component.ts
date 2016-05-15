@@ -58,7 +58,6 @@ import {TableInfoPanelModel} from "../panel-components/table-info.components";
   `]
 })
 export class NavComponent {
-  dbName:string = 'pgadmin';
   
   schemas = []
 
@@ -82,7 +81,7 @@ export class NavComponent {
     _pg = PgService
   constructor(){
 
-    this._pg.listTables(this.dbName)
+    this._pg.listTables()
         .subscribe((res) => {
           var tmp = {}, result = [];
           if (res.rows) {
