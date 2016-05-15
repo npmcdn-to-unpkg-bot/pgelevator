@@ -8,10 +8,12 @@ import {ModalsService} from '../services/modals.service';
    <input type=button value='new schema' (click)='newSchemaModal(0)'/>
     <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open" [class.arrow]="schema.tables.length!==0">
       <div class="schema-name" (click)="open(schema)" >{{schema.name}} <span class='edit-schema' (click)='newSchemaModal(schema.id);$event.stopPropagation()'><i class='fa fa-edit'></i></span></div>
-      <div class="table" *ngFor="let table of schema.tables">
-        <i class="table-type fa" [class.fa-table]="table.type=='BASE TABLE'" [class.fa-eye]="table.type=='VIEW'"></i>
-        {{table.name}}<sup>{{table.type}}</sup>
-        <i class='table-info fa fa-info-circle' *ngIf="table.type=='BASE TABLE'"></i> 
+      <div style="overflow:hidden" class="tables" [style.height.px]="!schema.open ? 0 : schema.tables.length * 22">
+          <div class="table" *ngFor="let table of schema.tables">
+            <i class="table-type fa" [class.fa-table]="table.type=='BASE TABLE'" [class.fa-eye]="table.type=='VIEW'"></i>
+            {{table.name}} <sup>{{table.type}}</sup>
+            <i class='table-info fa fa-info-circle' *ngIf="table.type=='BASE TABLE'"></i>
+          </div>
       </div>
     </div>
   `,
@@ -24,8 +26,10 @@ import {ModalsService} from '../services/modals.service';
         content: ''; border-top: 6px solid transparent; border-bottom: 6px solid transparent;
         border-left: 6px solid #444;
         height: 0; display: block; position: absolute;
-        left: 9px; top: 5px;
+        left: 9px; top: 5px; transition: transform .25s;
     }
+    .arrow.open:after { transform: rotate(90deg); }
+    .tables { transition: height .25s }
     .schema .table { display: none;}
     .schema.open .table {
         display: block;
