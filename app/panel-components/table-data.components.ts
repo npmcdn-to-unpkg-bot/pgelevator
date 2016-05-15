@@ -10,8 +10,9 @@ export class TableDataPanelModel extends PanelModel{
     title
     code = ""
     result:any
-
+    
     constructor(schema:string,table:string){
+        super()
         if ( schema && schema != 'public' )
             this.title = '"'+schema+'"."'+table+'"'
         else
