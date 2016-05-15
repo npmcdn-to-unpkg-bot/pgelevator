@@ -39,7 +39,6 @@ interface PgType{
     name:string
 }
 
-@Injectable()
 export var PgService = {
     
     types: null as {[_:string]:PgType}, //
