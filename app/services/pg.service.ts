@@ -70,12 +70,23 @@ export class PgService{
             "WHERE catalog_name = $1 AND schema_name NOT LIKE 'pg_%';";
         return this.query(sql, dbName);
     }
+    getSchema(schemaId:number){
+        let sql=`SELECT n.oid schema_id, n.nspname AS schema_name,                                          
+            pg_catalog.pg_get_userbyid(n.nspowner) AS schema_owner,                 
+            pg_catalog.obj_description(n.oid, 'pg_namespace') AS schema_comment 
+            FROM pg_catalog.pg_namespace n                                       
+            WHERE n.oid = $1      
+            ORDER BY 1;`;
+        return this.query(sql, schemaId);
+    }
     
-    listTables(dbName:string){ // and views
+    listTables(dbName:string)   { // and views
         let sql=`SELECT s.catalog_name db, s.schema_name, t.table_name, t.table_type, t.is_insertable_into, t.is_typed, 
                 t.primary_key,
-                t.primary_key_type
-                FROM information_schema.schemata s
+                t.primary_key_type,
+                n.oid schema_id
+                FROM information_schema.schemata s 
+                INNER JOIN pg_catalog.pg_namespace n ON n.nspname=s.schema_name 
                 LEFT JOIN (
                     SELECT table_catalog db, table_schema schema_name,table_name, 
                             table_type, is_insertable_into, is_typed
@@ -94,7 +105,7 @@ export class PgService{
                             ORDER BY table_schema, table_type, table_name
                 ) AS t ON t.db=s.catalog_name AND t.schema_name=s.schema_name
 
-                WHERE catalog_name = $1 `;
+                WHERE catalog_name = $1 and (n.nspname !~ '^pg_' OR n.nspname='pg_catalog')`;
         return this.query(sql, dbName)
     }
     listTablesFromSchema(dbName:string, schemaName:string){ // and views
