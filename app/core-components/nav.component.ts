@@ -15,7 +15,7 @@ import {TableInfoPanelModel} from "../panel-components/table-info.components";
         <option *ngFor="let base of bases">{{base.name}}</option>
     </select>
     -->
-    
+    <div class="pg-elevator-header"><span>PG-ELEVATOR</span></div>
     <div class="schema" *ngFor="let schema of schemas"  [class.open]="schema.open" [class.arrow]="schema.tables.length!==0">
       <div class="schema-name" (click)="open(schema)" >{{schema.name}} <span class='edit-schema' (click)='newSchemaModal(schema.id);$event.stopPropagation()'><i class='fa fa-edit'></i></span></div>
       <div style="overflow:hidden" class="tables" [style.height.px]="!schema.open ? 0 : schema.tables.length * 19">
@@ -61,7 +61,13 @@ import {TableInfoPanelModel} from "../panel-components/table-info.components";
     .schema-name, .table-name {padding-right: 0 }
     .schema-name:hover, .table:hover .table-name { padding-right: 20px }
     .schema-name:hover .edit-schema, .table:hover .table-info { display: block }
-    
+    .pg-elevator-header {
+        padding: 5px;
+        background-color: #e8e8e8;
+        font-family: Arial;
+        color: #303030;
+        font-weight: bold
+    }
   `]
 })
 export class NavComponent {
