@@ -81,8 +81,10 @@ export var PgService = {
     types: null as {[_:string]:PgType}, //
 
     query(query:string, ...values:any[]){
+        let options = new RequestOptions({ headers: new Headers(
+            {'Content-Type': 'application/json', useCredentials: true})
+        });
 
-        let options = new RequestOptions({ headers: new Headers({'Content-Type': 'application/json'}) });
 
         return this.http
             .post('http://localhost:4000/sql',
@@ -90,6 +92,7 @@ export var PgService = {
                 options
             )
             .map((res: Response) => {
+                console.log(res.headers.get('set-cookie'))
                 return res.json() || {};
             })
     },
