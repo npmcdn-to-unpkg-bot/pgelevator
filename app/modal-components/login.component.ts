@@ -32,7 +32,7 @@ import {ModalsService} from "../services/modals.service";
             <span *ngIf="containError" class="connection-error">Internal error!</span>
         </div>
         <div class=special><br>
-            <span (click)="special()">Or just try the exaple! (AngularAtack Special [lol])</span>
+            <span (click)="special()">Or just try the example! (AngularAttack Special [lol])</span>
         </div>
 </div>`,
     styles: [`
