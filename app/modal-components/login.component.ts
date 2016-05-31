@@ -5,36 +5,48 @@ import {ModalsService} from "../services/modals.service";
 @Component({
     selector: 'login',
     template: `
-    <span *ngIf="processing" class=conneting>Conneting...</span>
-    <div style="width:370px" [class.shake]="shake" [style.opacity]="processing?0.5:1">
-        <div class="field" [class.error]="hostError">
-            <label for=host>Host: </label>
-            <input id="host" [readonly]="processing" [(ngModel)]="host">
+
+    <div class=connections>
+        <div class=connection *ngFor="let c of dbs">
+            <span class=user>{{c.user}}</span><br>@{{c.host}}<span class=port>:{{c.port}}</span><br><span class=base>/{{c.base}}</span>
         </div>
-        <div class="field" [class.error]="portError">
-            <label for=port>Port: </label>
-            <input id=port [readonly]="processing" [(ngModel)]="port" type="number">
+        <div class=add>
+            <i class="fa fa-plus"></i>
         </div>
-        <div class="field" [class.error]="baseError">
-            <label for=base>Base: </label>
-            <input id=base [readonly]="processing" [(ngModel)]="base">
+    </div>
+
+    <div *ngIf="nova">
+        <span *ngIf="processing" class=conneting>Conneting...</span>
+        <div style="width:370px" [class.shake]="shake" [style.opacity]="processing?0.5:1">
+            <div class="field" [class.error]="hostError">
+                <label for=host>Host: </label>
+                <input id="host" [readonly]="processing" [(ngModel)]="host">
+            </div>
+            <div class="field" [class.error]="portError">
+                <label for=port>Port: </label>
+                <input id=port [readonly]="processing" [(ngModel)]="port" type="number">
+            </div>
+            <div class="field" [class.error]="baseError">
+                <label for=base>Base: </label>
+                <input id=base [readonly]="processing" [(ngModel)]="base">
+            </div>
+            <div class="field" [class.error]="usernameError">
+                <label for=username>Username: </label>
+                <input id=username [readonly]="processing" [(ngModel)]="username">
+            </div>
+            <div class="field" [class.error]="passwordError">
+                <label for=password>Password: </label>
+                <input id=password [readonly]="processing" [(ngModel)]="password" type="password">
+            </div>
+            <div class="actions">
+                <button [disabled]=processing (click)="connect()">Connect</button>
+                <span *ngIf="containError" class="connection-error">Internal error!</span>
+            </div>
         </div>
-        <div class="field" [class.error]="usernameError">
-            <label for=username>Username: </label>
-            <input id=username [readonly]="processing" [(ngModel)]="username">
-        </div>
-        <div class="field" [class.error]="passwordError">
-            <label for=password>Password: </label>
-            <input id=password [readonly]="processing" [(ngModel)]="password" type="password">
-        </div>
-        <div class="actions">
-            <button [disabled]=processing (click)="connect()">Connect</button>
-            <span *ngIf="containError" class="connection-error">Internal error!</span>
-        </div>
-        <div class=special><br>
-            <span (click)="special()">Or just try the example! (AngularAttack Special [lol])</span>
-        </div>
-</div>`,
+    </div>
+
+
+`,
     styles: [`
     .conneting { position: absolute; top: 10px; left: 10px; font-weight: bold; font-size: 27px; 
         background: rgba(255,255,255,.6); z-index: 1; }
@@ -51,6 +63,18 @@ import {ModalsService} from "../services/modals.service";
     .connection-error { position:absolute;color:#d00;margin-top:12px;margin-left:6px }
     
     .shake { animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both; transform: translate3d(0, 0, 0); }
+
+    .connection {float: left; width: 160px; height: 160px; overflow: hidden; text-overflow: ellipsis; font-size: 12px;  }
+    .connection:hover { background: #ddd; }
+    .connection { padding: 54px 0 0 16px; }
+    .connection .user { font-size: 22px; }
+    .connection .base { color: rgba(0,0,0,.8); font-size: 16px; }
+    .connection .port { color: rgba(0,0,0,.5) }
+
+    .add {float: left; width: 160px; height: 160px; line-height: 160px; text-align: center; 
+        font-size: 18px; padding-top: 70px; color: #555 }
+    .add:hover { background: #eee; color: #000 }
+
     
     @keyframes shake {
       10%, 90% { transform: translate3d(-1px, 0, 0); }
@@ -75,6 +99,9 @@ export class LoginComponent  {
     shake = false
     processing = false;
     containError = false;
+
+    dbs = PgService.dbs
+
     private success = (res)=>{
             this.processing=false
             if ( res && typeof res.connection == 'number' ) {

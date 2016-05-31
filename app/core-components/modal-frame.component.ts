@@ -12,9 +12,7 @@ import {LoginComponent} from "../modal-components/login.component";
     <schema-manager [model]="ModalsService.schemaManager"></schema-manager>
     </modal>
     
-    <modal *ngIf="ModalsService.login">
-    <login></login>
-    </modal>
+    <login *ngIf="ModalsService.login"></login>
   `
 })
 export class ModalFrameComponent {

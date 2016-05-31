@@ -1,5 +1,13 @@
 import {Observable} from 'rxjs/Observable';
-import 'rxjs/Rx'
+import 'rxjs/Rx';
+
+const fs = window.require('fs');
+const dbs =  fs.readFileSync( process.env.HOME + '/.pgpass', 'utf-8' )
+.trim().split('\n')
+.map((v) => v.trim().split(':') )
+.map((v) => {
+    return { host: v[0], port: v[1], base: v[2], user: v[3], password: v[4] };
+});
 
 /**Manager imports */
 interface Schema {
@@ -11,11 +19,11 @@ interface Schema {
     comment:string;
 }
 interface newField{
-            name:string;
-            dataType:string;
-            nullable:boolean;
-            comment:string;
-        };
+    name:string;
+    dataType:string;
+    nullable:boolean;
+    comment:string;
+};
 // interface Database {
 //     id: number;
 //     name: string;
@@ -105,6 +113,8 @@ function req(url,d,sync?:boolean) :Observable<any>{
 }
 
 export var PgService = {
+
+    dbs: dbs,
     
     types: null as {[_:string]:PgType},
 
